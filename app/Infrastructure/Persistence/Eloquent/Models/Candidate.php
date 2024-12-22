@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Candidate extends Model
 {
-    protected $table = 'Candidates'; // Tabla en la base de datos
+    protected $table = 'Candidates';
 
-    protected $fillable = ['name']; // Atributos que pueden ser asignados en masa
+    protected $fillable = [ 'name', 'email', 'skills' ];
 
-    public $timestamps = true; // Habilitar timestamps si es necesario
+    public $timestamps = true;
 }
