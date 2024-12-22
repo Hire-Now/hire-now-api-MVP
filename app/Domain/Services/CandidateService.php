@@ -7,8 +7,7 @@ use App\Domain\Repositories\CandidateRepositoryInterface;
 
 class CandidateService
 {
-    public function __construct(private CandidateRepositoryInterface $repository)
-    {}
+    // public function __construct(){}
 
     public function validateEmail(string $email): bool
     {
