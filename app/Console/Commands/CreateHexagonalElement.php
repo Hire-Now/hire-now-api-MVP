@@ -238,7 +238,7 @@ PHP;
         return <<<PHP
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\{$name};
 
 use App\Application\UseCases\\{$name}UseCase;
 use App\Domain\Repositories\\{$name}RepositoryInterface;
@@ -271,7 +271,7 @@ PHP;
         return <<<PHP
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\{$name};
 
 use App\Infrastructure\Persistence\Eloquent\\{$name}Repository;
 use App\Domain\Repositories\\{$name}RepositoryInterface;

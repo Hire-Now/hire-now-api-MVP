@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Candidate;
 
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Domain\Repositories\CandidateRepositoryInterface;

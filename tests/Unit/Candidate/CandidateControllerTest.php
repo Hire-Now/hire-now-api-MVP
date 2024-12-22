@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\Candidate;
 
 use App\Infrastructure\Controllers\CandidateController;
 use App\Application\UseCases\CandidateUseCase;
