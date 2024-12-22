@@ -3,9 +3,11 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Application\Commands\Candidate\CreateCandidateCommand;
+use App\Application\Commands\Candidate\UpdateCandidateCommand;
 use App\Application\UseCases\CandidateUseCase;
 use App\Application\DTOs\Candidate\CandidateDTO;
 use App\Application\Handlers\Candidate\CreateCandidateCommandHandler;
+use App\Application\Handlers\Candidate\UpdateCandidateCommandHandler;
 use App\Domain\Services\CandidateService;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use Illuminate\Http\Request;
@@ -42,6 +44,18 @@ class CandidateController
 
     public function update(Request $request, $id)
     {
+        $command = new UpdateCandidateCommand(
+            $id,
+            $request->name,
+            $request->email,
+            $request->skills
+        );
 
+        $handler = new UpdateCandidateCommandHandler(new CandidateUseCase(
+            new CandidateRepository(),
+            new CandidateService()
+        ));
+
+        return $handler->handle($command);
     }
 }

@@ -7,4 +7,5 @@ use App\Domain\Entities\Candidate;
 interface CandidateRepositoryInterface
 {
     public function save(Candidate $entity): Candidate;
+    public function find(string $id): ?Candidate;
 }

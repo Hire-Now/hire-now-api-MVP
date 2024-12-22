@@ -10,14 +10,36 @@ class CandidateRepository implements CandidateRepositoryInterface
 {
     public function save(Candidate $candidate): Candidate
     {
-        $model = CandidateModel::create([
+        if ($candidate->id) {
+            $candidateModel = CandidateModel::find($candidate->id);
+            $candidateModel->name = $candidate->name;
+            $candidateModel->email = $candidate->email;
+            $candidateModel->skills = $candidate->skills;
+            $candidateModel->save();
+
+            return $candidate;
+        }
+
+        return CandidateModel::create([
             'name'   => $candidate->name,
             'email'  => $candidate->email,
             'skills' => $candidate->skills
         ]);
+    }
 
-        $candidate->id = $model->id;
+    public function find(string $id): ?Candidate
+    {
+        $candidateModel = CandidateModel::find($id);
 
-        return $candidate;
+        if (!$candidateModel) {
+            return null;
+        }
+
+        return new Candidate(
+            id: $candidateModel->id,
+            name: $candidateModel->name,
+            email: $candidateModel->email,
+            skills: $candidateModel->skills
+        );
     }
 }

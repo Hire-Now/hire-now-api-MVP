@@ -26,4 +26,24 @@ class CandidateUseCaseTest extends TestCase
 
         $this->assertEquals('John Doe', $result->name);
     }
+
+    // public function testUpdateCandidate()
+    // {
+    //     $candidate = new Candidate(id: 1, name: 'John Doe', email: 'johndoe@example.com', skills: 'PHP');
+    //     $updatedCandidate = new Candidate(id: 1, name: 'Jane Doe', email: 'janedoe@example.com', skills: 'Laravel');
+
+    //     $repository = \Mockery::mock(CandidateRepositoryInterface::class);
+    //     $repository->shouldReceive('find')->with(1)->andReturn($candidate);
+    //     $repository->shouldReceive('save')->with(\Mockery::on(function ($arg) use ($updatedCandidate) {
+    //         return $arg->name === $updatedCandidate->name;
+    //     }))->andReturn($updatedCandidate);
+
+    //     $useCase = new CandidateUseCase($repository, new CandidateService());
+
+    //     $command = new UpdateCandidateCommand(1, 'Jane Doe', 'janedoe@example.com', 'Laravel');
+    //     $result = $useCase->update($command);
+
+    //     $this->assertEquals('Jane Doe', $result->name);
+    //     $this->assertEquals('janedoe@example.com', $result->email);
+    // }
 }
