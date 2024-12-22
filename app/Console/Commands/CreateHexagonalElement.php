@@ -16,17 +16,20 @@ class CreateHexagonalElement extends Command
         $name = ucfirst($name);
 
         $paths = [
-            "app/Domain/Entities/{$name}.php"                               => $this->getEntityTemplate($name),
-            "app/Domain/Repositories/{$name}RepositoryInterface.php"        => $this->getRepositoryInterfaceTemplate($name),
-            "app/Application/DTOs/{$name}DTO.php"                           => $this->getDTOTemplate($name),
-            "app/Application/UseCases/{$name}UseCase.php"                   => $this->getUseCaseTemplate($name),
-            "app/Infrastructure/Persistence/Eloquent/{$name}Repository.php" => $this->getEloquentRepositoryTemplate($name),
-            "app/Infrastructure/Controllers/{$name}Controller.php"          => $this->getControllerTemplate($name),
-            "app/Infrastructure/Persistence/Eloquent/Models/{$name}.php"    => $this->getModelTemplate($name),
-            "app/Application/Commands/Register{$name}Command.php"           => $this->getCommandTemplate($name),
-            "tests/Unit/{$name}/{$name}UseCaseTest.php"                     => $this->getUseCaseTestTemplate($name),
-            "tests/Unit/{$name}/{$name}RepositoryTest.php"                  => $this->getRepositoryTestTemplate($name),
-            "tests/Unit/{$name}/{$name}ControllerTest.php"                  => $this->getControllerTestTemplate($name),
+            "app/Domain/Entities/{$name}.php"                                  => $this->getEntityTemplate($name),
+            "app/Domain/Repositories/{$name}RepositoryInterface.php"           => $this->getRepositoryInterfaceTemplate($name),
+            "app/Domain/Services/{$name}Service.php"                           => $this->getDomainServiceTemplate($name),
+            "app/Application/Commands/{$name}/Create{$name}Command.php"      => $this->getCommandTemplate($name),
+            "app/Application/DTOs/{$name}/{$name}DTO.php"                              => $this->getDTOTemplate($name),
+            "app/Application/Handlers/{$name}/Create{$name}CommandHandler.php" => $this->getCommandHandlerTemplate($name),
+            "app/Application/UseCases/{$name}UseCase.php"                      => $this->getUseCaseTemplate($name),
+            "app/Infrastructure/Persistence/Eloquent/{$name}Repository.php"    => $this->getEloquentRepositoryTemplate($name),
+            "app/Infrastructure/Controllers/{$name}Controller.php"             => $this->getControllerTemplate($name),
+            "app/Infrastructure/Persistence/Eloquent/Models/{$name}.php"       => $this->getModelTemplate($name),
+            "app/Infrastructure/Services/{$name}Service.php"                   => $this->getInfrastructureServiceTemplate($name),
+            "tests/Unit/{$name}/{$name}UseCaseTest.php"                        => $this->getUseCaseTestTemplate($name),
+            "tests/Unit/{$name}/{$name}RepositoryTest.php"                     => $this->getRepositoryTestTemplate($name),
+            "tests/Unit/{$name}/{$name}ControllerTest.php"                     => $this->getControllerTestTemplate($name),
         ];
 
         foreach ($paths as $path => $content) {
@@ -34,6 +37,24 @@ class CreateHexagonalElement extends Command
         }
 
         $this->info("Hexagonal element '{$name}' created successfully!");
+
+        $this->updateComposerJson();
+        $this->info("Updated composer.json autoload configuration.");
+
+        $this->info("Running composer dump-autoload...");
+        exec('composer dump-autoload');
+    }
+
+    private function updateComposerJson()
+    {
+        $composerPath = base_path('composer.json');
+        $composerContent = json_decode(file_get_contents($composerPath), true);
+
+        if (!isset($composerContent['autoload']['psr-4']['App\\'])) {
+            $composerContent['autoload']['psr-4']['App\\'] = "app/";
+        }
+
+        file_put_contents($composerPath, json_encode($composerContent, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     private function createFile($path, $content)
@@ -83,12 +104,48 @@ interface {$name}RepositoryInterface
 PHP;
     }
 
+    private function getDomainServiceTemplate($name)
+    {
+        return <<<PHP
+<?php
+
+namespace App\Domain\Services;
+
+use App\Domain\Entities\\{$name};
+use App\Domain\Repositories\\{$name}RepositoryInterface;
+
+class {$name}Service{
+    public function __construct(private {$name}RepositoryInterface \$repository) {}
+}
+PHP;
+    }
+
+    private function getInfrastructureServiceTemplate($name)
+    {
+        return <<<PHP
+<?php
+
+namespace App\Infrastructure\Services;
+
+use Illuminate\Support\Facades\Mail;
+
+class {$name}Service{
+    public function sendNotification(string \$email, string \$message)
+    {
+        Mail::raw(\$message, function (\$mail) use (\$email) {
+            \$mail->to(\$email)
+                ->subject('Notification');
+        });
+    }}
+PHP;
+    }
+
     private function getDTOTemplate($name)
     {
         return <<<PHP
 <?php
 
-namespace App\Application\DTOs;
+namespace App\Application\DTOs\\{$name};
 
 class {$name}DTO
 {
@@ -214,22 +271,69 @@ PHP;
         return <<<PHP
 <?php
 
-namespace App\Application\Commands;
+namespace App\Application\Commands\\{$name};
 
-use Illuminate\Console\Command;
-
-class Register{$name}Command extends Command
+class Create{$name}Command
 {
-    protected \$signature = '{$name}:run';
-    protected \$description = 'Command to manage or execute operations for {$name}';
+    private string \$name;
+    private string \$email;
+    private ?string \$phoneNumber;
 
-    public function handle()
+    public function __construct(string \$name, string \$email, ?string \$phoneNumber = null)
     {
-        \$this->info('{$name} command executed successfully!');
+        \$this->name = \$name;
+        \$this->email = \$email;
+        \$this->phoneNumber = \$phoneNumber;
+    }
+
+    public function getName(): string
+    {
+        return \$this->name;
+    }
+
+    public function getEmail(): string
+    {
+        return \$this->email;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return \$this->phoneNumber;
     }
 }
 PHP;
     }
+
+
+    private function getCommandHandlerTemplate($name)
+    {
+        return <<<PHP
+<?php
+
+namespace App\Application\Handlers\\{$name};
+
+use App\Application\Commands\\{$name}\\Create{$name}Command;
+use App\Domain\Repositories\\{$name}RepositoryInterface;
+use App\Domain\Entities\\{$name};
+
+class Create{$name}CommandHandler
+{
+    private {$name}RepositoryInterface \$repository;
+
+    public function __construct({$name}RepositoryInterface \$repository)
+    {
+        \$this->repository = \$repository;
+    }
+
+    public function handle(Create{$name}Command \$command): {$name}
+    {
+        \$entity = new {$name}(null, \$command->getName());
+        return \$this->repository->save(\$entity);
+    }
+}
+PHP;
+    }
+
 
     // Archivos de pruebas unitarias
 
@@ -238,7 +342,7 @@ PHP;
         return <<<PHP
 <?php
 
-namespace Tests\Unit\{$name};
+namespace Tests\Unit\\{$name};
 
 use App\Application\UseCases\\{$name}UseCase;
 use App\Domain\Repositories\\{$name}RepositoryInterface;
@@ -271,7 +375,7 @@ PHP;
         return <<<PHP
 <?php
 
-namespace Tests\Unit\{$name};
+namespace Tests\Unit\\{$name};
 
 use App\Infrastructure\Persistence\Eloquent\\{$name}Repository;
 use App\Domain\Repositories\\{$name}RepositoryInterface;
@@ -300,7 +404,7 @@ PHP;
         return <<<PHP
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Unit\\{$name};
 
 use App\Infrastructure\Controllers\\{$name}Controller;
 use App\Application\UseCases\\{$name}UseCase;

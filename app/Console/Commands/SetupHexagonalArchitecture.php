@@ -28,7 +28,6 @@ class SetupHexagonalArchitecture extends Command
     {
         $this->info("Setting up Hexagonal Architecture...");
 
-        // Define the directory structure
         $directories = [
             'app/Domain/Entities',
             'app/Domain/Repositories',
@@ -42,7 +41,6 @@ class SetupHexagonalArchitecture extends Command
             'app/Infrastructure/Providers',
         ];
 
-        // Create directories
         foreach ($directories as $dir) {
             if (!File::exists(base_path($dir))) {
                 File::makeDirectory(base_path($dir), 0755, true);
@@ -50,7 +48,6 @@ class SetupHexagonalArchitecture extends Command
             }
         }
 
-        // Move Models to Domain/Entities
         $modelsPath = base_path('app/Models');
         $entitiesPath = base_path('app/Domain/Entities');
         if (File::exists($modelsPath)) {
@@ -61,7 +58,6 @@ class SetupHexagonalArchitecture extends Command
             File::deleteDirectory($modelsPath);
         }
 
-        // Move Controllers to Infrastructure/Controllers
         $controllersPath = base_path('app/Http/Controllers');
         $infraControllersPath = base_path('app/Infrastructure/Controllers');
         if (File::exists($controllersPath)) {
@@ -72,15 +68,42 @@ class SetupHexagonalArchitecture extends Command
             File::deleteDirectory($controllersPath);
         }
 
-        // Update composer autoload
+        $providersPath = base_path('app/Providers');
+        $infraProvidersPath = base_path('app/Infrastructure/Providers');
+        if (File::exists($providersPath)) {
+            foreach (File::allFiles($providersPath) as $file) {
+                File::move($file->getPathname(), "{$infraProvidersPath}/{$file->getFilename()}");
+                $this->info("Moved provider: {$file->getFilename()} to Infrastructure/Providers");
+            }
+            File::deleteDirectory($providersPath);
+        }
+
+        $this->updateAppServiceProviderNamespace();
+
         $this->updateComposerJson();
         $this->info("Updated composer.json autoload configuration.");
 
-        // Dump-autoload to refresh namespaces
         $this->info("Running composer dump-autoload...");
         exec('composer dump-autoload');
 
         $this->info("Hexagonal Architecture setup completed!");
+    }
+
+    private function updateAppServiceProviderNamespace()
+    {
+        $providerPath = base_path('app/Infrastructure/Providers/AppServiceProvider.php');
+        if (File::exists($providerPath)) {
+            $content = File::get($providerPath);
+
+            $newNamespace = 'App\\Infrastructure\\Providers';
+            $updatedContent = preg_replace('/namespace\s+App\\\Providers;/', "namespace {$newNamespace};", $content);
+
+            // Guardar el archivo con el nuevo namespace
+            File::put($providerPath, $updatedContent);
+            $this->info("Updated namespace for AppServiceProvider.");
+        } else {
+            $this->error("AppServiceProvider.php not found.");
+        }
     }
 
     private function updateComposerJson()
