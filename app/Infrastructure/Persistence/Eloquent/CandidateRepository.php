@@ -8,15 +8,16 @@ use App\Infrastructure\Persistence\Eloquent\Models\Candidate as CandidateModel;
 
 class CandidateRepository implements CandidateRepositoryInterface
 {
-    public function save(Candidate $entity): Candidate
+    public function save(Candidate $candidate): Candidate
     {
-        $model = CandidateModel::updateOrCreate(
-            ['id' => $entity->id],
-            ['name' => $entity->name]
-        );
+        $model = CandidateModel::create([
+            'name'   => $candidate->name,
+            'email'  => $candidate->email,
+            'skills' => $candidate->skills
+        ]);
 
-        $entity->id = $model->id;
+        $candidate->id = $model->id;
 
-        return $entity;
+        return $candidate;
     }
 }
