@@ -6,13 +6,13 @@ class CreateCandidateCommand
 {
     private string $name;
     private string $email;
-    private ?string $phoneNumber;
+    private string $skills;
 
-    public function __construct(string $name, string $email, ?string $phoneNumber = null)
+    public function __construct(string $name, string $email, string $skills = null)
     {
         $this->name = $name;
         $this->email = $email;
-        $this->phoneNumber = $phoneNumber;
+        $this->skills = $skills;
     }
 
     public function getName(): string
@@ -25,8 +25,8 @@ class CreateCandidateCommand
         return $this->email;
     }
 
-    public function getPhoneNumber(): ?string
+    public function getSkills(): ?string
     {
-        return $this->phoneNumber;
+        return $this->skills;
     }
 }
