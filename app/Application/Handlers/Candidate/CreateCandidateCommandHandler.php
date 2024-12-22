@@ -9,8 +9,6 @@ use App\Domain\Entities\Candidate;
 
 class CreateCandidateCommandHandler
 {
-    private CandidateRepositoryInterface $repository;
-
     public function __construct(private CandidateUseCase $useCase)
     {
     }
