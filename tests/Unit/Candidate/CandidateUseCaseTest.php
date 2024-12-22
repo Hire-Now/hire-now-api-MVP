@@ -4,24 +4,26 @@ namespace Tests\Unit\Candidate;
 
 use App\Application\UseCases\CandidateUseCase;
 use App\Domain\Repositories\CandidateRepositoryInterface;
-use App\Application\DTOs\CandidateDTO;
+use App\Domain\Services\CandidateService;
+use App\Application\DTOs\Candidate\CandidateDTO;
 use PHPUnit\Framework\TestCase;
-use Mockery;
 
 class CandidateUseCaseTest extends TestCase
 {
     public function testExecute()
     {
-        $repositoryMock = Mockery::mock(CandidateRepositoryInterface::class);
-        $repositoryMock->shouldReceive('save')
-            ->once()
-            ->andReturn(new \App\Domain\Entities\Candidate(1, 'Test'));
+        $repository = $this->createMock(CandidateRepositoryInterface::class);
+        $service = $this->createMock(CandidateService::class);
+        $useCase = new CandidateUseCase($repository, $service);
 
-        $useCase = new CandidateUseCase($repositoryMock);
-        $dto = new CandidateDTO('Test');
+        $dto = new CandidateDTO(name: 'John Doe', email: 'john@example.com', skills: 'PHP, Laravel');
+
+        $repository->expects($this->once())
+            ->method('save')
+            ->willReturn(new \App\Domain\Entities\Candidate(1, 'John Doe', 'john@example.com', 'PHP, Laravel'));
+
         $result = $useCase->execute($dto);
 
-        $this->assertInstanceOf(\App\Domain\Entities\Candidate::class, $result);
-        $this->assertEquals('Test', $result->name);
+        $this->assertEquals('John Doe', $result->name);
     }
 }
