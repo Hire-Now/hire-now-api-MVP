@@ -3,6 +3,7 @@
 namespace App\Application\Handlers\Candidate;
 
 use App\Application\Commands\Candidate\CreateCandidateCommand;
+use App\Application\UseCases\CandidateUseCase;
 use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Domain\Entities\Candidate;
 
@@ -10,14 +11,12 @@ class CreateCandidateCommandHandler
 {
     private CandidateRepositoryInterface $repository;
 
-    public function __construct(CandidateRepositoryInterface $repository)
+    public function __construct(private CandidateUseCase $useCase)
     {
-        $this->repository = $repository;
     }
 
-    public function handle(CreateCandidateCommand $command): Candidate
+    public function handle(CreateCandidateCommand $command)
     {
-        $entity = new Candidate(null, $command->getName());
-        return $this->repository->save($entity);
+        return $this->useCase->execute($command);
     }
 }
