@@ -5,26 +5,35 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Domain\Entities\Candidate;
 use App\Infrastructure\Persistence\Eloquent\Models\Candidate as CandidateModel;
+use Exception;
 
 class CandidateRepository implements CandidateRepositoryInterface
 {
     public function save(Candidate $candidate): Candidate
     {
-        if ($candidate->id) {
-            $candidateModel = CandidateModel::find($candidate->id);
-            $candidateModel->name = $candidate->name;
-            $candidateModel->email = $candidate->email;
-            $candidateModel->skills = $candidate->skills;
-            $candidateModel->save();
+        try {
+            if ($candidate->getId()) {
+                $candidateModel = CandidateModel::find($candidate->getId());
+                $candidateModel->name = $candidate->getName();
+                $candidateModel->email = $candidate->getEmail();
+                $candidateModel->skills = $candidate->getSkills();
+                $candidateModel->save();
+
+                return $candidate;
+            }
+
+            $candidateModel = CandidateModel::create([
+                'name'   => $candidate->getName(),
+                'email'  => $candidate->getEmail(),
+                'skills' => $candidate->getSkills()
+            ]);
+
+            $candidate->setId($candidateModel->id);
 
             return $candidate;
+        } catch (\Throwable $th) {
+            throw new Exception("Error saving candidate to database", 0, $th);
         }
-
-        return CandidateModel::create([
-            'name'   => $candidate->name,
-            'email'  => $candidate->email,
-            'skills' => $candidate->skills
-        ]);
     }
 
     public function find(string $id): ?Candidate

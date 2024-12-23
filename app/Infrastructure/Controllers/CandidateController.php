@@ -11,6 +11,7 @@ use App\Application\Handlers\Candidate\UpdateCandidateCommandHandler;
 use App\Domain\Services\CandidateService;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class CandidateController
 {
@@ -21,25 +22,37 @@ class CandidateController
     //todo: crear elemento de tipo request y estandarizar response
     public function store(Request $request)
     {
-        $dto = CandidateDTO::fromRequest($request->all());
+        try {
+            $dto = CandidateDTO::fromRequest($request->all());
 
-        $command = new CreateCandidateCommand(
-            $dto->name,
-            $dto->email,
-            $dto->skills
-        );
+            $command = new CreateCandidateCommand(
+                $dto->name,
+                $dto->email,
+                $dto->skills
+            );
 
-        $handler = new CreateCandidateCommandHandler(new CandidateUseCase(
-            new CandidateRepository(),
-            new CandidateService()
-        ));
+            $handler = new CreateCandidateCommandHandler(new CandidateUseCase(
+                new CandidateRepository(),
+                new CandidateService()
+            ));
 
-        $candidate = $handler->handle($command);
+            $candidate = $handler->handle($command);
 
-        return response()->json([
-            'message'   => 'Candidate created successfully!',
-            'candidate' => $candidate
-        ]);
+            return response()->json([
+                'message'   => 'Candidate created successfully!',
+                'candidate' => $candidate
+            ]);
+        } catch (BadRequestException $th) {
+            return response()->json([
+                'message'   => $th->getMessage(),
+                'candidate' => []
+            ], status: 400);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => 'An unexpected error just happened!',
+                'candidate' => []
+            ], 500);
+        }
     }
 
     public function update(Request $request, $id)

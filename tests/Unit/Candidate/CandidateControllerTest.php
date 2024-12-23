@@ -1,19 +1,25 @@
 <?php
-
 namespace Tests\Unit\Candidate;
 
+use App\Application\UseCases\CandidateUseCase;
+use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Infrastructure\Controllers\CandidateController;
+use App\Infrastructure\Services\CandidateService;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\TestCase;
+use Mockery;
+use Tests\TestCase;
 
 class CandidateControllerTest extends TestCase
 {
     public function testStore()
     {
-        $controller = new CandidateController(new \App\Application\UseCases\CandidateUseCase(
-            new \App\Infrastructure\Persistence\Eloquent\CandidateRepository(),
-            new \App\Infrastructure\Services\CandidateService()
-        ));
+        /** @var CandidateRepositoryInterface|\Mockery\MockInterface $mockRepository */
+        $mockRepository = Mockery::mock(CandidateRepositoryInterface::class);
+        $mockRepository->shouldReceive('save')->andReturn(true);
+
+        $useCase = new CandidateUseCase($mockRepository, new CandidateService());
+
+        $controller = new CandidateController($useCase);
 
         $request = Request::create('/candidates', 'POST', [
             'name'   => 'John Doe',
@@ -24,5 +30,11 @@ class CandidateControllerTest extends TestCase
         $response = $controller->store($request);
 
         $this->assertJson($response->getContent());
+    }
+
+    protected function tearDown(): void
+    {
+        Mockery::close();
+        parent::tearDown();
     }
 }

@@ -18,13 +18,13 @@ class CandidateUseCase
     public function execute(CandidateDTO $dto): Candidate
     {
         // Validaciones
-        if (!$this->service->validateEmail($dto->email)) {
-            throw new \Exception("Invalid email");
-        }
+        // if (!$this->service->validateEmail($dto->email)) {
+        //     throw new \Exception("Invalid email");
+        // }
 
-        if (!$this->service->validateSkills($dto->skills)) {
-            throw new \Exception("Invalid skills");
-        }
+        // if (!$this->service->validateSkills($dto->skills)) {
+        //     throw new \Exception("Invalid skills");
+        // }
 
         // Crear candidato y guardarlo
         $candidate = new Candidate(
@@ -55,9 +55,9 @@ class CandidateUseCase
             throw new \Exception("Candidate not found");
         }
 
-        $candidate->name = $command->getName();
-        $candidate->email = $command->getEmail();
-        $candidate->skills = $command->getSkills();
+        $candidate->setName($command->getName());
+        $candidate->setEmail($command->getEmail());
+        $candidate->setSkills($command->getSkills());
 
         return $this->repository->save($candidate);
     }

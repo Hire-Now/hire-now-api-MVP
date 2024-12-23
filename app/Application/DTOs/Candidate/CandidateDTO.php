@@ -2,6 +2,9 @@
 
 namespace App\Application\DTOs\Candidate;
 
+use Exception;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+
 class CandidateDTO
 {
     public string $name;
@@ -19,10 +22,14 @@ class CandidateDTO
     // Método para convertir los datos de la solicitud a un DTO
     public static function fromRequest(array $data): self
     {
-        return new self(
-            $data['name'],
-            $data['email'],
-            $data['skills']
-        );
+        try {
+            return new self(
+                $data['name'],
+                $data['email'],
+                $data['skills']
+            );
+        } catch (\Throwable $th) {
+            throw new BadRequestException("Bad request, all fields are mandatory, please fill in all.");
+        }
     }
 }
