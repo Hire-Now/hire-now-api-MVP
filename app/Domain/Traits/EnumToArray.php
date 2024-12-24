@@ -6,16 +6,16 @@ trait EnumToArray
 {
     public static function names(): array
     {
-        return array_column(self::cases(), 'name');
+        return array_column(static::cases(), 'name');
     }
 
     public static function values(): array
     {
-        return array_column(self::cases(), 'value');
+        return array_column(static::cases(), 'value');
     }
 
     public static function array(): array
     {
-        return array_combine(self::values(), self::names());
+        return array_combine(static::values(), static::names());
     }
 }
