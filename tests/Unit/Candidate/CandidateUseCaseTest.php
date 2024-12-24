@@ -8,7 +8,7 @@ use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Domain\Services\CandidateService;
 use App\Application\DTOs\Candidate\CandidateDTO;
 use App\Domain\Entities\Candidate;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class CandidateUseCaseTest extends TestCase
 {

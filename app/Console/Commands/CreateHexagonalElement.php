@@ -78,10 +78,18 @@ class CreateHexagonalElement extends Command
 
 namespace App\Domain\Entities;
 
+use App\Domain\Attributes\Getter;
+use App\Domain\Attributes\Setter;
+use App\Domain\Traits\AccessorTrait;
+
 class {$name}
 {
+    use AccessorTrait;
+
     public function __construct(
+        #[Getter] #[Setter]
         public ?int \$id,
+        #[Getter] #[Setter]
         public string \$name
     ) {}
 }
@@ -169,7 +177,7 @@ PHP;
 namespace App\Application\UseCases;
 
 use App\Domain\Repositories\\{$name}RepositoryInterface;
-use App\Application\DTOs\\{$name}DTO;
+use App\Application\DTOs\\{$name}\\{$name}DTO;
 use App\Domain\Entities\\{$name};
 
 class {$name}UseCase
@@ -225,7 +233,7 @@ PHP;
 namespace App\Infrastructure\Controllers;
 
 use App\Application\UseCases\\{$name}UseCase;
-use App\Application\DTOs\\{$name}DTO;
+use App\Application\DTOs\\{$name}\\{$name}DTO;
 use Illuminate\Http\Request;
 
 class {$name}Controller
@@ -346,8 +354,8 @@ namespace Tests\Unit\\{$name};
 
 use App\Application\UseCases\\{$name}UseCase;
 use App\Domain\Repositories\\{$name}RepositoryInterface;
-use App\Application\DTOs\\{$name}DTO;
-use PHPUnit\Framework\TestCase;
+use App\Application\DTOs\\{$name}\\{$name}DTO;
+use Tests\TestCase;
 use Mockery;
 
 class {$name}UseCaseTest extends TestCase
@@ -380,7 +388,7 @@ namespace Tests\Unit\\{$name};
 use App\Infrastructure\Persistence\Eloquent\\{$name}Repository;
 use App\Domain\Repositories\\{$name}RepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\Models\\{$name} as {$name}Model;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class {$name}RepositoryTest extends TestCase
 {
@@ -409,7 +417,7 @@ namespace Tests\Unit\\{$name};
 use App\Infrastructure\Controllers\\{$name}Controller;
 use App\Application\UseCases\\{$name}UseCase;
 use Illuminate\Http\Request;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Mockery;
 
 class {$name}ControllerTest extends TestCase

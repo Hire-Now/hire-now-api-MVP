@@ -19,7 +19,7 @@ class CandidateController
     {
     }
 
-    //todo: crear elemento de tipo request y estandarizar response
+    //todo: estandarizar response
     public function store(Request $request)
     {
         try {
@@ -57,18 +57,30 @@ class CandidateController
 
     public function update(Request $request, $id)
     {
-        $command = new UpdateCandidateCommand(
-            $id,
-            $request->name,
-            $request->email,
-            $request->skills
-        );
+        try {
+            $command = new UpdateCandidateCommand(
+                $id,
+                $request->name,
+                $request->email,
+                $request->skills
+            );
 
-        $handler = new UpdateCandidateCommandHandler(new CandidateUseCase(
-            new CandidateRepository(),
-            new CandidateService()
-        ));
+            $handler = new UpdateCandidateCommandHandler(new CandidateUseCase(
+                new CandidateRepository(),
+                new CandidateService()
+            ));
 
-        return $handler->handle($command);
+            $candidate = $handler->handle($command);
+
+            return response()->json([
+                'message'   => 'Candidate updated successfully!',
+                'candidate' => $candidate
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message'   => 'An unexpected error just happened!',
+                'candidate' => []
+            ], 500);
+        }
     }
 }

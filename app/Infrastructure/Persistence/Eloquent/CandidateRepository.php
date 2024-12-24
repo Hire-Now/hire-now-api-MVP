@@ -28,8 +28,6 @@ class CandidateRepository implements CandidateRepositoryInterface
                 'skills' => $candidate->getSkills()
             ]);
 
-            $candidate->setId($candidateModel->id);
-
             return $candidate;
         } catch (\Throwable $th) {
             throw new Exception("Error saving candidate to database", 0, $th);

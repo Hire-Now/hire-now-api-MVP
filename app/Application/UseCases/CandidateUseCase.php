@@ -39,7 +39,6 @@ class CandidateUseCase
 
     public function update(UpdateCandidateCommand $command): Candidate
     {
-        // Validaciones
         if (!$this->service->validateEmail($command->getEmail())) {
             throw new \Exception("Invalid email");
         }
@@ -48,7 +47,6 @@ class CandidateUseCase
             throw new \Exception("Invalid skills");
         }
 
-        // Buscar el candidato a actualizar
         $candidate = $this->repository->find($command->getId());
 
         if (!$candidate) {
