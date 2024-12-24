@@ -31,7 +31,7 @@ class Candidate
         #[Getter] #[Setter]
         private ?string $uploadedCV,
         #[Getter] #[Setter]
-        private ?string $uploadedPitch,
+        private ?array $uploadedPitch,
         /** @var LanguagesGrades[]*/
         #[Getter] #[Setter]
         private ?array $languagesGrades,

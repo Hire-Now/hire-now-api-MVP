@@ -23,7 +23,7 @@ class Education
         #[Setter] #[Getter]
         private Carbon $endDate,
         #[Setter] #[Getter]
-        private Carbon $grade
+        private ?string $grade
     ) {
     }
 }
