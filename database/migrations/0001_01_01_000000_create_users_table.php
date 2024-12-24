@@ -13,13 +13,44 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //todo: Crear tablas intermedias para roles y permisos para los roles
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('description');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('permissions', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique();
+            $table->string('description');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('role_permission', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('user_role', function (Blueprint $table) {
+            $table->uuid('user_id');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->timestamps();
+            $table->softDeletes();
+
+            $table->primary([ 'user_id', 'role_id' ]);
+        });
+
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique()->index();
             $table->string('password');
-            $table->enum('role', Roles::values())->index();
             $table->enum('status', ElementStatus::values())->default(ElementStatus::ACTIVE)->index();
             $table->timestamp('last_activity')->nullable();
             $table->timestamp('email_verified_at')->nullable();
@@ -39,6 +70,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('user_role');
+        Schema::dropIfExists('role_permission');
+        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('roles');
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
     }

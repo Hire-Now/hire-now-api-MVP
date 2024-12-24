@@ -23,8 +23,13 @@ class User extends Model
 
     public $timestamps = true;
 
-    // public function candidates()
-    // {
-    //     return $this->hasOne(Candidate::class);
-    // }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_role');
+    }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');
+    }
 }
