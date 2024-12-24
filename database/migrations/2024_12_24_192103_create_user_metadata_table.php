@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('candidates', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('user_id')->nullable()->index();
-            $table->integer('years_of_experience');
-            $table->string('uploaded_cv')->nullable();
-            $table->string('uploaded_pitch')->nullable();
-            $table->jsonb('generated_platform_cv')->nullable();
+        Schema::create('user_metadata', function (Blueprint $table) {
+            $table->uuid('íd')->primary();
+            $table->uuid('user_id')->index();
+            $table->string('key');
+            $table->text('value')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
@@ -29,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('candidates');
+        Schema::dropIfExists('user_metadata');
     }
 };

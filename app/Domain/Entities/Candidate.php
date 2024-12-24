@@ -13,7 +13,7 @@ class Candidate
 
     public function __construct(
         #[Getter] #[Setter]
-        private ?int $userId,
+        private ?string $userId,
         /** @var Skill[] */
         #[Getter] #[Setter]
         private array $skills,
@@ -44,5 +44,7 @@ class Candidate
         /** @var ActiveProcesses[]*/
         #[Getter] #[Setter]
         private ?array $activeProcesses,
+        #[Getter] #[Setter]
+        private ?string $generatedPlatformCV,
     ) {}
 }

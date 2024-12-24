@@ -2,11 +2,15 @@
 
 namespace App\Domain\Enums;
 
-enum Roles
+use App\Domain\Traits\EnumToArray;
+
+enum Roles: string
 {
-    case ADMINISTRATOR;
-    case MODERATOR;
-    case RECRUITER;
-    case EXECUTIVE;
-    case CANDIDATE;
+    use EnumToArray;
+
+    case ADMINISTRATOR = 'administrator';
+    case MODERATOR = 'moderator';
+    case RECRUITER = 'recruiter';
+    case EXECUTIVE = 'executive';
+    case CANDIDATE = 'candidate';
 }

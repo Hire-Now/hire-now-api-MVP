@@ -2,9 +2,13 @@
 
 namespace App\Domain\Enums;
 
-enum ElementStatus
+use App\Domain\Traits\EnumToArray;
+
+enum ElementStatus: string
 {
-    case ACTIVE;
-    case INACTIVE;
-    case DELETED;
+    use EnumToArray;
+
+    case ACTIVE = 'active';
+    case INACTIVE = 'inactive';
+    case DELETED = 'deleted';
 }
