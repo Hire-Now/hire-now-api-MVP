@@ -28,7 +28,21 @@ class Candidate
         #[Getter] #[Setter]
         /** @var Education[]*/
         private array $education,
-        /** @var Education[]*/
-        private array $cvUrl,
+        #[Getter] #[Setter]
+        private ?string $uploadedCV,
+        #[Getter] #[Setter]
+        private ?string $uploadedPitch,
+        /** @var LanguagesGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $languagesGrades,
+        /** @var TechnicalGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $technicalGrades,
+        /** @var CompletedAssesments[]*/
+        #[Getter] #[Setter]
+        private ?array $completedAssesments,
+        /** @var ActiveProcesses[]*/
+        #[Getter] #[Setter]
+        private ?array $activeProcesses,
     ) {}
 }
