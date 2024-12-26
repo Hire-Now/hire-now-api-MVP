@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Domain\Services;
+namespace App\Domain\Contracts;
 
 interface PasswordHasherInterface
 {

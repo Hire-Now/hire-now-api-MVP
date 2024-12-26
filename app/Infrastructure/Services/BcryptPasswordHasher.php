@@ -2,7 +2,7 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Domain\Services\PasswordHasherInterface;
+use App\Domain\Contracts\PasswordHasherInterface;
 use Illuminate\Support\Facades\Hash;
 
 class BcryptPasswordHasher implements PasswordHasherInterface

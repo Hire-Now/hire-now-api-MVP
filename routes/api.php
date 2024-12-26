@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('v1')->group(function () {
-    Route::post('/user', [ UserController::class, 'store' ]);
-    Route::post('/', function (): Carbon{
-        return Carbon::now();
+    Route::group(['prefix' => 'user'], function(){
+        Route::post('/', [ UserController::class, 'store' ])->middleware([ 'throttle:6,1' ]);
+        Route::get('/email/verify/{id}/{hash}', [ UserController::class, 'verifyEmail' ])->middleware([ 'signed', 'throttle:6,1' ]);
     });
 });

@@ -4,11 +4,12 @@ namespace App\Application\UseCases;
 
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
-use App\Domain\Services\PasswordHasherInterface;
+use App\Domain\Contracts\PasswordHasherInterface;
+use App\Domain\Contracts\TokenGeneratorInterface;
 
 class UserUseCase
 {
-    public function __construct(private UserRepositoryInterface $repository, private PasswordHasherInterface $passwordHasher)
+    public function __construct(private UserRepositoryInterface $repository, private ?PasswordHasherInterface $passwordHasher)
     {}
 
     public function createUser(User $entity): User

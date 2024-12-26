@@ -7,7 +7,7 @@ use App\Application\UseCases\UserUseCase;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
 use App\Domain\Enums\ElementStatus;
-use App\Domain\Services\PasswordHasherInterface;
+use App\Domain\Contracts\PasswordHasherInterface;
 use Carbon\Carbon;
 
 class CreateUserCommandHandler

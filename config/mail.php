@@ -61,8 +61,9 @@ return [
             // ],
         ],
 
-        'resend' => [
+        'resend'     => [
             'transport' => 'resend',
+            'api_key'   => env('RESEND_API_KEY', 're_B2ERRiF5_8vzEJwU7yA28xhLtXp5AcNHE'),
         ],
 
         'sendmail' => [

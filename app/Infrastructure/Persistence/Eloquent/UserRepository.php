@@ -25,7 +25,7 @@ class UserRepository implements UserRepositoryInterface
             ]);
 
             $user->setId($userModel->id);
-            $user->setPassword(null);
+            $user->setCreatedAt($userModel->created_at);
 
             return $user;
         } catch (\Throwable $th) {

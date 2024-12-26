@@ -34,4 +34,18 @@ class User
         #[Getter] #[Setter]
         private ?Carbon $lastActiviy
     ) {}
+
+    public function toArray(): array
+    {
+        return [
+            'id'          => $this->id,
+            'name'        => $this->name,
+            'email'       => $this->email,
+            'birthDate'   => $this->birthDate->toDateString(),
+            'role'        => $this->role?->value,
+            'status'      => $this->status?->value,
+            'createdAt'   => $this->createdAt?->toDateTimeString(),
+            'lastActiviy' => $this->lastActiviy?->toDateTimeString(),
+        ];
+    }
 }

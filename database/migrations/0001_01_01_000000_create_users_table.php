@@ -53,7 +53,6 @@ return new class extends Migration
             $table->string('password');
             $table->enum('status', ElementStatus::values())->default(ElementStatus::ACTIVE)->index();
             $table->timestamp('last_activity')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -62,6 +61,16 @@ return new class extends Migration
             $table->string('email')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
+        });
+
+        Schema::create('email_verification_tokens', function (Blueprint $table): void {
+            $table->uuid('id')->primary();
+            $table->uuid('user_id')->nullable();
+            $table->string('email')->unique();
+            $table->string('token')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users');
         });
 
         Schema::create('sessions', function (Blueprint $table) {
