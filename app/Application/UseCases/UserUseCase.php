@@ -2,21 +2,21 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\DTOs\User\UserDTO;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
+use App\Domain\Services\PasswordHasherInterface;
 
 class UserUseCase
 {
-    public function __construct(private UserRepositoryInterface $repository) {}
+    public function __construct(private UserRepositoryInterface $repository, private PasswordHasherInterface $passwordHasher)
+    {}
 
-    public function execute(UserDTO $dto): User
+    public function createUser(User $entity): User
     {
-        $entity = new User(
-            id: null,
-            name: $dto->name
-        );
+        $hashedPassword = $this->passwordHasher->hash($entity->getPassword());
 
-        return $this->repository->save($entity);
+        $entity->setPassword($hashedPassword);
+
+        return $this->repository->create($entity);
     }
 }

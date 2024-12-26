@@ -18,7 +18,8 @@ class User extends Model
         'role',
         'status',
         'last_activity',
-        'email_verified_at'
+        'email_verified_at',
+        'birth_date'
     ];
 
     public $timestamps = true;

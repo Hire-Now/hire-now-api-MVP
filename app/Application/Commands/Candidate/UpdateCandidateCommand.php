@@ -2,39 +2,48 @@
 
 namespace App\Application\Commands\Candidate;
 
+use App\Domain\Traits\AccessorTrait;
+use App\Domain\Attributes\Getter;
+use App\Domain\Attributes\Setter;
+
 class UpdateCandidateCommand
 {
 
-    private string $id;
-    private string $name;
-    private string $email;
-    private string $skills;
+    use AccessorTrait;
 
-    public function __construct(string $id, string $name, string $email, string $skills)
-    {
-        $this->id = $id;
-        $this->name = $name;
-        $this->email = $email;
-        $this->skills = $skills;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getSkills(): ?string
-    {
-        return $this->skills;
-    }
+    public function __construct(
+        #[Getter] #[Setter]
+        private string $candidateId,
+        /** @var Skill[] */
+        #[Getter] #[Setter]
+        private ?array $skills,
+        /** @var Language[]*/
+        #[Getter] #[Setter]
+        private ?array $languages,
+        private ?int $yearsOfExperience,
+        /** @var PreviousExperiences[]*/
+        #[Getter] #[Setter]
+        private ?array $previousExperiences,
+        /** @var Education[]*/
+        #[Getter] #[Setter]
+        private ?array $education,
+        #[Getter] #[Setter]
+        private ?string $uploadedCV,
+        #[Getter] #[Setter]
+        private ?array $uploadedPitch,
+        /** @var LanguagesGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $languagesGrades,
+        /** @var TechnicalGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $technicalGrades,
+        /** @var CompletedAssesments[]*/
+        #[Getter] #[Setter]
+        private ?array $completedAssesments,
+        /** @var ActiveProcesses[]*/
+        #[Getter] #[Setter]
+        private ?array $activeProcesses,
+        #[Getter] #[Setter]
+        private ?string $generatedPlatformCV,
+    ) {}
 }

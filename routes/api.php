@@ -1,12 +1,14 @@
 <?php
 
 use App\Infrastructure\Controllers\CandidateController;
-use Illuminate\Http\Request;
+use App\Infrastructure\Controllers\UserController;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
 
-Route::post('/candidate', [CandidateController::class, 'store']);
-Route::put('/candidate/{id}', [CandidateController::class, 'update']);
+Route::prefix('v1')->group(function () {
+    Route::post('/user', [ UserController::class, 'store' ]);
+    Route::post('/', function (): Carbon{
+        return Carbon::now();
+    });
+});

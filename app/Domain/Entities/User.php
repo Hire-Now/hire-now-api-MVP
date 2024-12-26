@@ -21,20 +21,17 @@ class User
         private string $name,
         #[Getter] #[Setter]
         private string $email,
-        #[Getter]
-        private string $password,
         #[Getter] #[Setter]
-        private Roles $role,
+        private ?string $password,
         #[Getter] #[Setter]
-        private ElementStatus $status,
+        private Carbon $birthDate,
         #[Getter] #[Setter]
-        private Carbon $createdAt,
+        private ?Roles $role,
         #[Getter] #[Setter]
-        private Carbon $lastActiviy
+        private ?ElementStatus $status,
+        #[Getter] #[Setter]
+        private ?Carbon $createdAt,
+        #[Getter] #[Setter]
+        private ?Carbon $lastActiviy
     ) {}
-
-    public function setPassword($password): void
-    {
-        $this->password = Hash::make($password, ['rouds' => 12]);
-    }
 }

@@ -2,31 +2,28 @@
 
 namespace App\Application\Commands\User;
 
+use App\Domain\Attributes\Getter;
+use App\Domain\Attributes\Setter;
+use App\Domain\Enums\ElementStatus;
+use App\Domain\Enums\Roles;
+use App\Domain\Traits\AccessorTrait;
+use Carbon\Carbon;
+
 class CreateUserCommand
 {
-    private string $name;
-    private string $email;
-    private ?string $phoneNumber;
+    use AccessorTrait;
 
-    public function __construct(string $name, string $email, ?string $phoneNumber = null)
-    {
-        $this->name = $name;
-        $this->email = $email;
-        $this->phoneNumber = $phoneNumber;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getPhoneNumber(): ?string
-    {
-        return $this->phoneNumber;
+    public function __construct(
+        #[Getter] #[Setter]
+        private string $name,
+        #[Getter] #[Setter]
+        private string $email,
+        #[Setter] #[Getter]
+        private string $password,
+        #[Setter] #[Getter]
+        private Carbon $birthDate,
+        #[Setter] #[Getter]
+        private Roles $role,
+    ) {
     }
 }

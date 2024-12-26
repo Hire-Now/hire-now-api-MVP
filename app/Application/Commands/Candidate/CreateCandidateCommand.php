@@ -2,31 +2,29 @@
 
 namespace App\Application\Commands\Candidate;
 
+use App\Domain\Traits\AccessorTrait;
+use App\Domain\Attributes\Getter;
+use App\Domain\Attributes\Setter;
+
 class CreateCandidateCommand
 {
-    private string $name;
-    private string $email;
-    private string $skills;
+    use AccessorTrait;
 
-    public function __construct(string $name, string $email, string $skills = null)
-    {
-        $this->name = $name;
-        $this->email = $email;
-        $this->skills = $skills;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getSkills(): ?string
-    {
-        return $this->skills;
-    }
+    public function __construct(
+        /** @var Skill[] */
+        #[Getter] #[Setter]
+        private array $skills,
+        /** @var Language[]*/
+        #[Getter] #[Setter]
+        private array $languages,
+        private int $yearsOfExperience,
+        /** @var PreviousExperiences[]*/
+        #[Getter] #[Setter]
+        private array $previousExperiences,
+        /** @var Education[]*/
+        #[Getter] #[Setter]
+        private array $education,
+        #[Getter] #[Setter]
+        private ?string $uploadedCV
+    ) {}
 }

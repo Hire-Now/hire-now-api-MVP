@@ -20,7 +20,6 @@ class Candidate
         /** @var Language[]*/
         #[Getter] #[Setter]
         private array $languages,
-        #[Getter] #[Setter]
         private int $yearsOfExperience,
         /** @var PreviousExperiences[]*/
         #[Getter] #[Setter]
