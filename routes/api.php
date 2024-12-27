@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 //     echo "<pre>Time: {$query->time} ms</pre>";
 // });
 
-
+//todo: middleware que valide que el email ya se encuentra verificado
 Route::prefix('v1')->group(function () {
     Route::group([ 'prefix' => 'user' ], function () {
         Route::post('/', [ UserController::class, 'store' ])->middleware([ 'throttle:6,1' ]);
