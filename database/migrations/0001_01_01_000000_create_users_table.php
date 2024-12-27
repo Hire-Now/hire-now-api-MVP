@@ -70,7 +70,7 @@ return new class extends Migration
             $table->string('token')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
 
         Schema::create('sessions', function (Blueprint $table) {
@@ -94,8 +94,9 @@ return new class extends Migration
         Schema::dropIfExists('role_permission');
         Schema::dropIfExists('permissions');
         Schema::dropIfExists('roles');
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('email_verification_tokens');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('users');
     }
 };

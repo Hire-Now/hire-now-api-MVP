@@ -1,24 +1,20 @@
 <?php
 
-namespace App\Application\Commands\Email;
+namespace App\Application\Commands\User;
 
 use App\Domain\Attributes\Getter;
 use App\Domain\Attributes\Setter;
-use App\Domain\Enums\Roles;
 use App\Domain\Traits\AccessorTrait;
-use Carbon\Carbon;
 
-class VerifyEmailCommand
+class FetchUserInformationCommand
 {
     use AccessorTrait;
 
     public function __construct(
         #[Getter] #[Setter]
-        private string $userId,
+        private ?string $id,
         #[Getter] #[Setter]
-        private string $email,
-        #[Getter] #[Setter]
-        private string $hash
+        private ?string $email
     ) {
     }
 }

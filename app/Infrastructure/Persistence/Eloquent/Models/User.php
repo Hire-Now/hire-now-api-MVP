@@ -19,11 +19,31 @@ class User extends Model
         'role',
         'status',
         'last_activity',
-        'email_verified_at',
         'birth_date'
     ];
 
     public $timestamps = true;
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'created_at'    => 'datetime',
+            'updated_at'    => 'datetime',
+            'birth_date'    => 'datetime',
+            'last_activity' => 'datetime',
+            'password'      => 'hashed',
+        ];
+    }
 
     public function roles()
     {

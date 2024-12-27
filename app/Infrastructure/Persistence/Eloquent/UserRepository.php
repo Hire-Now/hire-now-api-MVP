@@ -4,11 +4,14 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
+use App\Domain\Enums\ElementStatus;
+use App\Domain\Enums\Roles;
 use App\Infrastructure\Persistence\Eloquent\Models\User as UserModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -16,16 +19,17 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $userModel = UserModel::create([
-                'name' => $user->getName(),
-                'email' => $user->getEmail(),
-                'password' => $user->getPassword(),
-                'status' => $user->getStatus(),
+                'name'          => $user->getName(),
+                'email'         => $user->getEmail(),
+                'password'      => $user->getPassword(),
+                'status'        => $user->getStatus(),
                 'last_activity' => Carbon::now(),
-                'birth_date' => $user->getBirthDate()
+                'birth_date'    => $user->getBirthDate()
             ]);
 
             $user->setId($userModel->id);
             $user->setCreatedAt($userModel->created_at);
+            $user->setPassword(null);
 
             return $user;
         } catch (\Throwable $th) {
@@ -34,13 +38,49 @@ class UserRepository implements UserRepositoryInterface
     }
 
     public function findById(string $id): ?User
-    {
-        return null;
+    {   //todo: setear roles a la entidad
+        try {
+            $userModel = UserModel::with('roles')->findOrFail($id);
+
+            return new User(
+                $userModel->id,
+                $userModel->name,
+                $userModel->email,
+                $userModel->password,
+                $userModel->birth_date,
+                null,
+                ElementStatus::{strtoupper($userModel->status)},
+                $userModel->created_at,
+                $userModel->last_activity
+            );
+        } catch (\Throwable $th) {
+            throw new Exception("Error fetching user data from database.", 0, $th);
+        }
     }
 
     public function update(string $id, User $entity): User
     {
-        return new User();
+        try {
+            $date = Carbon::now();
+            //todo: arreglar updates para que no se deban actualizar todos los campos siempre, solo lo requerido
+            $userModel = UserModel::where('id', $id)->update([
+                'name'          => $entity->getName(),
+                'email'         => $entity->getEmail(),
+                'status'        => $entity->getStatus(),
+                'last_activity' => $date,
+                'birth_date'    => $entity->getBirthDate(),
+            ]);
+
+            if (!$userModel) {
+                throw new ModelNotFoundException("An error happened when updating the model, " . UserModel::class);
+            }
+
+            $entity->setLastActivity($date);
+
+            return $entity;
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
     }
 
     public function delete(string $id): bool

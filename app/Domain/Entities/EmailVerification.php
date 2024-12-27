@@ -19,12 +19,15 @@ class EmailVerification
         #[Getter] #[Setter]
         private ?string $email,
         #[Getter] #[Setter]
-        private ?string $hash,
+        private ?string $storedHash,
+        #[Getter] #[Setter]
+        private ?string $urlHash,
         #[Getter] #[Setter]
         private ?string $verifyLink,
         #[Getter] #[Setter]
         private ?Carbon $emailVerifiedAt
-    ) {}
+    ) {
+    }
 
     public function toArray(): array
     {

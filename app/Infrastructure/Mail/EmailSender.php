@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Mail;
 
 use App\Domain\Contracts\EmailSenderInterface;
-// use Resennd
+use Resend\Laravel\Facades\Resend;
 
 class EmailSender implements EmailSenderInterface
 {

@@ -11,8 +11,19 @@ class EmailVerificationToken extends Model
     use HasUuids, MustVerifyEmail;
 
     protected $fillable = [
+        'user_id',
         'email',
         'token',
         'email_verified_at',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'created_at'        => 'datetime',
+            'updated_at'        => 'datetime',
+            'email_verified_at' => 'datetime'
+        ];
+    }
+
 }

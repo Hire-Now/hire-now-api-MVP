@@ -18,13 +18,13 @@ class User
         #[Getter] #[Setter]
         private ?string $id,
         #[Getter] #[Setter]
-        private string $name,
+        private ?string $name,
         #[Getter] #[Setter]
-        private string $email,
+        private ?string $email,
         #[Getter] #[Setter]
         private ?string $password,
         #[Getter] #[Setter]
-        private Carbon $birthDate,
+        private ?Carbon $birthDate,
         #[Getter] #[Setter]
         private ?Roles $role,
         #[Getter] #[Setter]
@@ -32,8 +32,9 @@ class User
         #[Getter] #[Setter]
         private ?Carbon $createdAt,
         #[Getter] #[Setter]
-        private ?Carbon $lastActiviy
-    ) {}
+        private ?Carbon $lastActivity
+    ) {
+    }
 
     public function toArray(): array
     {
@@ -44,8 +45,8 @@ class User
             'birthDate'   => $this->birthDate->toDateString(),
             'role'        => $this->role?->value,
             'status'      => $this->status?->value,
-            'createdAt'   => $this->createdAt?->toDateTimeString(),
-            'lastActiviy' => $this->lastActiviy?->toDateTimeString(),
+            'createdAt'   => $this->createdAt?->format('Y-m-d H:i:s'),
+            'lastActiviy' => $this->lastActivity?->format('Y-m-d H:i:s'),
         ];
     }
 }

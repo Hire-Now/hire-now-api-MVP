@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Application\Handlers\User;
+namespace App\Application\Handlers\Email;
 
 use App\Application\Commands\Email\CreateEmailVerificationCommand;
 use App\Application\Commands\Email\SendVerificationEmailCommand;
-use App\Application\Commands\User\VerifyEmailCommand;
+use App\Application\Commands\Email\VerifyEmailCommand;
 use App\Application\UseCases\EmailUseCase;
-use App\Application\UseCases\UserUseCase;
+
 use App\Domain\Entities\EmailVerification;
-use App\Domain\Entities\User;
-use App\Domain\Enums\ElementStatus;
-use Carbon\Carbon;
 
 class VerifyEmailCommandHandler
 {
@@ -26,6 +23,7 @@ class VerifyEmailCommandHandler
             $command->getEmail(),
             null,
             null,
+            null,
             null
         ));
     }
@@ -33,5 +31,18 @@ class VerifyEmailCommandHandler
     public function sendVerificationEmail(SendVerificationEmailCommand $command): EmailVerification
     {
         return $this->emailUseCase->sendEmailVerificationLink($command->getEmailVerification());
+    }
+
+    public function handleHashVerification(VerifyEmailCommand $command): EmailVerification
+    {
+        return $this->emailUseCase->verifyEmail(new EmailVerification(
+            null,
+            $command->getUserId(),
+            $command->getEmail(),
+            null,
+            $command->getHash(),
+            null,
+            null
+        ));
     }
 }
