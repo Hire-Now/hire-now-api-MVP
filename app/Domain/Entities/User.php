@@ -25,8 +25,9 @@ class User
         private ?string $password,
         #[Getter] #[Setter]
         private ?Carbon $birthDate,
+        /** @var Role[] */
         #[Getter] #[Setter]
-        private ?Roles $role,
+        private ?array $roles,
         #[Getter] #[Setter]
         private ?ElementStatus $status,
         #[Getter] #[Setter]
@@ -36,14 +37,19 @@ class User
     ) {
     }
 
+    public function addRole(string $role)
+    {
+        $this->roles[] = $role;
+    }
+
     public function toArray(): array
     {
         return [
             'id'          => $this->id,
             'name'        => $this->name,
             'email'       => $this->email,
-            'birthDate'   => $this->birthDate->toDateString(),
-            'role'        => $this->role?->value,
+            'birthDate'   => $this->birthDate?->format('Y-m-d H:i:s'),
+            'roles'       => $this->roles,
             'status'      => $this->status?->value,
             'createdAt'   => $this->createdAt?->format('Y-m-d H:i:s'),
             'lastActiviy' => $this->lastActivity?->format('Y-m-d H:i:s'),
