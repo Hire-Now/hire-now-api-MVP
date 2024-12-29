@@ -10,7 +10,9 @@ class Permission extends Model
 {
     use HasUuids, SoftDeletes;
 
-    protected $fillable = [ 'name', 'description' ];
+    protected $table = 'permissions';
+
+    protected $fillable = [ 'name', 'description', 'status' ];
 
     public function roles()
     {

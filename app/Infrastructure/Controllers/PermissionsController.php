@@ -2,18 +2,19 @@
 
 namespace App\Infrastructure\Controllers;
 
-use App\Application\Commands\Role\CreateRoleCommand;
-use App\Application\Handlers\Role\CreateRoleCommandHandler;
+use App\Application\Commands\Permission\CreatePermissionCommand;
+use App\Application\Handlers\Permission\CreatePermissionCommandHandler;
+use App\Domain\Entities\Permission;
 use App\Domain\Entities\Role;
-use App\Infrastructure\Requests\CreateRoleRequest;
+use App\Infrastructure\Requests\CreatePermissionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class RoleController
+class PermissionsController
 {
 
     public function __construct(
-        private CreateRoleCommandHandler $createRoleCommandHandler,
+        private CreatePermissionCommandHandler $createPermissionCommandHandler,
     ) {
     }
 
@@ -25,16 +26,24 @@ class RoleController
         //
     }
 
-    public function create(CreateRoleRequest $request): JsonResponse
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(CreatePermissionRequest $request): JsonResponse
     {
         try {
-            $role = $this->createRole($request->validated());
+            $command = new CreatePermissionCommand(
+                $request['name'],
+                $request['description']
+            );
+
+            $permission = $this->createPermissionCommandHandler->handle($command);
 
             return response()->json([
                 'status'  => 'SUCCESS',
                 'message' => 'Role created successfully!',
                 'data'    => [
-                    'role' => $role->toArray(),
+                    'role' => $permission->toArray(),
                 ]
             ], 200);
         } catch (\Throwable $th) {
@@ -45,20 +54,26 @@ class RoleController
         }
     }
 
-    private function createRole($request): Role
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        $command = new CreateRoleCommand(
-            $request['name'],
-            $request['description']
-        );
-
-        return $this->createRoleCommandHandler->handle($command);
+        //
     }
 
     /**
      * Display the specified resource.
      */
     public function show(Role $role)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Role $role)
     {
         //
     }
@@ -74,7 +89,7 @@ class RoleController
     /**
      * Remove the specified resource from storage.
      */
-    public function delete(Role $role)
+    public function destroy(Role $role)
     {
         //
     }

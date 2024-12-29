@@ -6,40 +6,45 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('roles', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('description');
+            $table->enum('status', ElementStatus::values())->default(ElementStatus::ACTIVE)->index();
             $table->timestamps();
             $table->softDeletes();
         });
 
         Schema::create('permissions', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name')->unique();
             $table->string('description');
+            $table->enum('status', ElementStatus::values())->default(ElementStatus::ACTIVE)->index();
             $table->timestamps();
             $table->softDeletes();
         });
 
         Schema::create('role_permission', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
-            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+            $table->uuid('id')->primary();
+            $table->uuid('role_id');
+            $table->uuid('permission_id');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
+            $table->foreign('permission_id')->references('id')->on('permissions')->onDelete('cascade');
         });
 
         Schema::create('user_role', function (Blueprint $table) {
             $table->uuid('user_id');
-            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->uuid('role_id');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
 

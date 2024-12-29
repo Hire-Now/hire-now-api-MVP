@@ -12,10 +12,21 @@ class Permission
 
     public function __construct(
         #[Getter] #[Setter]
-        private string $name,
+        private ?string $id,
         #[Getter] #[Setter]
-        private string $description,
+        private ?string $name,
+        #[Getter] #[Setter]
+        private ?string $description,
     ) {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id'          => $this->id,
+            'name'        => $this->name,
+            'description' => $this->description,
+        ];
     }
 }
 
