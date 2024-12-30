@@ -15,6 +15,7 @@ use App\Domain\Repositories\EmailVerificationRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\RoleRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
+
 use App\Infrastructure\Mail\EmailSender;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Infrastructure\Persistence\Eloquent\EmailVerificationRepository;
@@ -22,7 +23,9 @@ use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\RoleRepository;
 use App\Infrastructure\Persistence\Eloquent\UserRepository;
 use App\Infrastructure\Services\BcryptPasswordHasher;
+use App\Infrastructure\Services\QueryLoggerService;
 use App\Infrastructure\Services\TokenGenerator;
+
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -51,6 +54,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        QueryLoggerService::enable();
     }
 }

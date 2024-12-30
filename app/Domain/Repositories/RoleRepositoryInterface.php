@@ -12,6 +12,6 @@ interface RoleRepositoryInterface
     public function update(string $id, Role $entity): Role;
     public function delete(string $id): bool;
     public function findByEmail(string $email): Role;
-    public function fetchAll(): Collection;
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
     public function paginate(int $perPage): Collection;
 }

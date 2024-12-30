@@ -68,9 +68,21 @@ class RoleRepository implements RoleRepositoryInterface
         return new Role();
     }
 
-    public function fetchAll(): Collection
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
     {
-        return new Collection();
+        $query = RoleModel::query();
+
+        if (!is_null($name)) {
+            $query->where('name', 'like', "%{$name}%");
+        }
+
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+
+        $query->orderBy("{$orderBy}_at", $orderDirection);
+
+        return $query->get([ 'id', 'name', 'description', 'status', 'created_at', 'updated_at' ]);
     }
 
     public function paginate(int $perPage): Collection

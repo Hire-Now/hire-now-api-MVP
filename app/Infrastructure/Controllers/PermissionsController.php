@@ -33,15 +33,15 @@ class PermissionsController
     {
         try {
             $command = new CreatePermissionCommand(
-                $request['name'],
-                $request['description']
+                $request->validated()['name'],
+                $request->validated()['description']
             );
 
             $permission = $this->createPermissionCommandHandler->handle($command);
 
             return response()->json([
                 'status'  => 'SUCCESS',
-                'message' => 'Role created successfully!',
+                'message' => 'Permission created successfully!',
                 'data'    => [
                     'role' => $permission->toArray(),
                 ]
@@ -52,14 +52,6 @@ class PermissionsController
                 'data'    => []
             ], 500);
         }
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**

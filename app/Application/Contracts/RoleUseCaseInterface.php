@@ -3,6 +3,8 @@
 namespace App\Application\Contracts;
 
 use App\Domain\Entities\Role;
+use App\Shared\Types\SearchRolesFilter;
+use Illuminate\Database\Eloquent\Collection;
 
 interface RoleUseCaseInterface
 {
@@ -13,4 +15,6 @@ interface RoleUseCaseInterface
     public function deleteRole(Role $entity): Role;
 
     public function assignPermissionsToRole(Role $entity): Role;
+
+    public function fetchRoles(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
 }
