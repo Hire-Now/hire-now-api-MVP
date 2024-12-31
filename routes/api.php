@@ -19,17 +19,21 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::group([ 'prefix' => 'admin' ], function () {
-        Route::post('/role', [ RoleController::class, 'create' ]);
-        Route::put('/role', [ RoleController::class, 'update' ]);
-        Route::get('/role', [ RoleController::class, 'index' ]);
-        Route::get('/role/{id}', [ RoleController::class, 'show' ]);
-        Route::delete('/role/{id}', [ RoleController::class, 'delete' ]);
-        Route::post('/role/{roleId}/permission', [ RoleController::class, 'assignPermissionToRole' ]);
+        Route::group([ 'prefix' => 'role' ], function () {
+            Route::post('/', [ RoleController::class, 'create' ]);
+            Route::put('/', [ RoleController::class, 'update' ]); //todo: falta
+            Route::get('/', [ RoleController::class, 'index' ]);
+            Route::get('/{id}', [ RoleController::class, 'show' ]); //todo: falta
+            Route::delete('/{id}', [ RoleController::class, 'delete' ]); //todo: falta
+            Route::post('/{roleId}/permission', [ RoleController::class, 'assignPermissionToRole' ]);
+        });
 
-        Route::post('/permission', [ PermissionsController::class, 'create' ]);
-        Route::put('/permission', [ PermissionsController::class, 'update' ]);
-        Route::get('/permission', [ PermissionsController::class, 'index' ]);
-        Route::get('/permission/{id}', [ PermissionsController::class, 'show' ]);
-        Route::delete('/permission/{id}', [ PermissionsController::class, 'delete' ]);
+        Route::group([ 'prefix' => 'permission' ], function () {
+            Route::post('/', [ PermissionsController::class, 'create' ]);
+            Route::put('/', [ PermissionsController::class, 'update' ]); //todo: falta
+            Route::get('', [ PermissionsController::class, 'index' ]);
+            Route::get('/{id}', [ PermissionsController::class, 'show' ]); //todo: falta
+            Route::delete('/{id}', [ PermissionsController::class, 'delete' ]); //todo: falta
+        });
     });
 })->middleware([ 'throttle:6,1' ]);
