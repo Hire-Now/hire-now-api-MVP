@@ -25,7 +25,7 @@ class AssingPermissionToRoleRequest extends FormRequest
     {
         return [
             'permissions'   => 'required|array',
-            'permissions.*' => 'uuid'
+            'permissions.*' => 'uuid|exists:permissions,id'
         ];
     }
 

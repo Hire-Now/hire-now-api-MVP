@@ -18,6 +18,12 @@ return new class extends Migration {
             $table->timestamp('created_at')->useCurrent()->nullable()->change();
             $table->timestamp('updated_at')->useCurrent()->nullable()->change();
         });
+
+        Schema::table('user_role', function (Blueprint $table) {
+            $table->timestamp('created_at')->useCurrent()->nullable()->change();
+            $table->timestamp('updated_at')->useCurrent()->nullable()->change();
+        });
+
     }
 
     /**
@@ -31,6 +37,11 @@ return new class extends Migration {
             $table->uuid('id')->change();
             $table->timestamp('created_at')->nullable()->change();
             $table->timestamp('updated_at')->nullable()->change();
+        });
+
+        Schema::table('user_role', function (Blueprint $table) {
+            $table->timestamp('created_at')->useCurrent()->nullable()->change();
+            $table->timestamp('updated_at')->useCurrent()->nullable()->change();
         });
     }
 };
