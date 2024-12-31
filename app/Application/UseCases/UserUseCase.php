@@ -2,10 +2,11 @@
 
 namespace App\Application\UseCases;
 
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\Domain\Entities\Role;
 use App\Domain\Entities\User;
 use App\Domain\Contracts\PasswordHasherInterface;
 use App\Domain\Contracts\TokenGeneratorInterface;
+use App\Domain\Repositories\UserRepositoryInterface;
 
 class UserUseCase
 {
@@ -20,6 +21,11 @@ class UserUseCase
         $entity->setPassword($hashedPassword);
 
         return $this->repository->create($entity);
+    }
+
+    public function setRoleToUser(string $userId, array $role): void
+    {
+        $this->repository->setRoleToUser($userId, $role);
     }
 
     public function findUserById(User $entity): User

@@ -3,7 +3,9 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\Role;
+use App\Domain\Entities\Permission;
 use App\Domain\Repositories\RoleRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\Models\Permission as PermissionModel;
 use App\Infrastructure\Persistence\Eloquent\Models\Role as RoleModel;
 use Carbon\Carbon;
 use Exception;
@@ -29,13 +31,50 @@ class RoleRepository implements RoleRepositoryInterface
     }
 
     public function findById(string $id): ?Role
-    {   //todo: setear roles a la entidad
+    {
         try {
-            $roleModel = RoleModel::with('permissions')->findOrFail($id);
+            $role = RoleModel::with('permissions')->findOrFail($id);
 
-            return new Role();
+            $permissionsEntities = $role->permissions->map(function ($permission) {
+                return new Permission($permission->id, $permission->name, $permission->description);
+            });
+
+            return new Role($role->id, $role->name, $role->description, $permissionsEntities->toArray());
         } catch (\Throwable $th) {
-            throw new Exception("Error fetching user data from database.", 0, $th);
+            throw new Exception("Error fetching role data from database.", 0, $th);
+        }
+    }
+
+    /**
+     * Summary of findByName
+     * @param array $roles
+     * @throws \Exception
+     * @return array Role[]
+     */
+    public function findByName(array $roles): ?array
+    {
+        try {
+            $rolesFound = RoleModel::whereIn('name', $roles)->with('permissions')->get();
+            $rolesWithPermissions = [];
+
+            foreach ($rolesFound as $role) {
+                $permissionsEntities = [];
+
+                foreach ($role->permissions as $permission) {
+                    $permissionsEntities[] = new Permission($permission->id, $permission->name, $permission->description);
+                }
+
+                $rolesWithPermissions[] = new Role(
+                    $role->id,
+                    $role->name,
+                    $role->description,
+                    $permissionsEntities
+                );
+            }
+
+            return $rolesWithPermissions;
+        } catch (\Throwable $th) {
+            throw new Exception("Error fetching role data from database.", 0, $th);
         }
     }
 
@@ -63,30 +102,77 @@ class RoleRepository implements RoleRepositoryInterface
         return true;
     }
 
-    public function findByEmail(string $email): Role
+    public function createRolePermissions(string $roleId, array $permissions): Role
     {
-        return new Role();
+        try {
+            $role = RoleModel::findOrFail($roleId);
+
+            $role->permissions()->syncWithoutDetaching($permissions);
+
+            $permissionsEntities = PermissionModel::whereIn('id', $permissions)->get();
+
+            $permissionEntities = $permissionsEntities->map(function ($permission) {
+                return new Permission($permission->id, $permission->name, $permission->description);
+            });
+
+            return new Role(
+                $role->id,
+                $role->name,
+                $role->description,
+                $permissionEntities->toArray()
+            );
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
+    }
+
+    public function removeRolePermissions(string $roleId, array $permissions): Role
+    {
+        try {
+            $role = RoleModel::findOrFail($roleId);
+
+            $role->permissions()->detach($permissions);
+
+            $permissionsEntities = $role->permissions;
+
+            $permissionEntities = $permissionsEntities->map(function ($permission) {
+                return new Permission($permission->id, $permission->name, $permission->description);
+            });
+
+            return new Role(
+                $role->id,
+                $role->name,
+                $role->description,
+                $permissionEntities->toArray()
+            );
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
     }
 
     public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
     {
-        $query = RoleModel::query();
+        try {
+            if (!in_array($orderDirection, [ 'asc', 'desc' ])) {
+                throw new Exception('Order direction param is wrong, permitted values are asc or desc');
+            }
 
-        if (!is_null($name)) {
-            $query->where('name', 'like', "%{$name}%");
+            $query = RoleModel::query();
+
+            if (!is_null($name)) {
+                $query->where('name', 'like', "%{$name}%");
+            }
+
+            if (!is_null($status)) {
+                $query->where('status', $status);
+            }
+
+            $query->orderBy("{$orderBy}_at", $orderDirection);
+
+            return $query->with('permissions')->get([ 'id', 'name', 'description', 'status', 'created_at', 'updated_at' ]);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
         }
-
-        if (!is_null($status)) {
-            $query->where('status', $status);
-        }
-
-        $query->orderBy("{$orderBy}_at", $orderDirection);
-
-        return $query->get([ 'id', 'name', 'description', 'status', 'created_at', 'updated_at' ]);
     }
 
-    public function paginate(int $perPage): Collection
-    {
-        return new Collection();
-    }
 }

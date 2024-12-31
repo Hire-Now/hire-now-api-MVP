@@ -49,7 +49,7 @@ class User
             'name'        => $this->name,
             'email'       => $this->email,
             'birthDate'   => $this->birthDate?->format('Y-m-d H:i:s'),
-            'roles'       => $this->roles,
+            'roles'       => array_map(fn(Role $role) => $role->toArray(), $this->roles ?? []),
             'status'      => $this->status?->value,
             'createdAt'   => $this->createdAt?->format('Y-m-d H:i:s'),
             'lastActiviy' => $this->lastActivity?->format('Y-m-d H:i:s'),

@@ -2,29 +2,33 @@
 
 namespace App\Infrastructure\Controllers;
 
+use Carbon\Carbon;
 use App\Domain\Enums\Roles;
-use App\Domain\Enums\ElementStatus;
 
-use App\Infrastructure\Requests\CreateUserRequest;
-
-use App\Application\Commands\Email\CreateEmailVerificationCommand;
-use App\Application\Commands\Email\SendVerificationEmailCommand;
-use App\Application\Commands\Email\VerifyEmailCommand;
-
-use App\Application\Commands\User\CreateUserCommand;
-use App\Application\Commands\User\FetchUserInformationCommand;
-use App\Application\Commands\User\UpdateUserInformationCommand;
-
-use App\Application\Handlers\Email\VerifyEmailCommandHandler;
-use App\Application\Handlers\User\CreateUserCommandHandler;
-use App\Application\Handlers\User\FetchUserCommandHandler;
-use App\Application\Handlers\User\UpdateUserCommandHandler;
-
-use App\Domain\Entities\EmailVerification;
 use App\Domain\Entities\User;
 
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
+use App\Domain\Enums\ElementStatus;
+use App\Domain\Entities\EmailVerification;
+
+use App\Infrastructure\Requests\CreateUserRequest;
+use App\Application\Commands\User\CreateUserCommand;
+use App\Application\Commands\Email\VerifyEmailCommand;
+
+use App\Application\Commands\User\SetRoleToUserCommand;
+use App\Application\Handlers\User\FetchUserCommandHandler;
+use App\Application\Handlers\User\CreateUserCommandHandler;
+use App\Application\Handlers\User\UpdateUserCommandHandler;
+
+use App\Application\Handlers\Email\VerifyEmailCommandHandler;
+use App\Application\Commands\Role\FetchRoleInformationCommand;
+
+use App\Application\Commands\User\FetchUserInformationCommand;
+use App\Application\Commands\User\UpdateUserInformationCommand;
+use App\Application\Commands\Email\SendVerificationEmailCommand;
+use App\Application\Commands\Email\CreateEmailVerificationCommand;
+use App\Application\Handlers\Role\FetchRoleInformationCommandHandler;
+use App\Application\Handlers\User\SetRoleToUserCommandHandler;
 
 class UserController
 {
@@ -33,7 +37,9 @@ class UserController
         private CreateUserCommandHandler $createUserHandler,
         private VerifyEmailCommandHandler $verifyEmailHandler,
         private FetchUserCommandHandler $fetchUserCommandHandler,
-        private UpdateUserCommandHandler $updateUserCommandHandler
+        private UpdateUserCommandHandler $updateUserCommandHandler,
+        private FetchRoleInformationCommandHandler $fetchRoleInformationCommandHandler,
+        private SetRoleToUserCommandHandler $setRoleToUserCommandHandler
     ) {
     }
 
@@ -46,7 +52,16 @@ class UserController
     public function store(CreateUserRequest $request): JsonResponse
     {
         try {
-            $user = $this->createUser($request->validated());
+            $validatedData = $request->validated();
+
+            $user = $this->createUserWithRole(
+                $validatedData['name'],
+                $validatedData['email'],
+                $validatedData['password'],
+                $validatedData['birth_date'],
+                $validatedData['roles']
+            );
+
             $emailVerifyLink = $this->sendVerificationEmail(user: $user);
 
             return response()->json([
@@ -58,11 +73,35 @@ class UserController
                 ]
             ], 200);
         } catch (\Throwable $th) {
+            dd($th);
+            logger()->error($th);
+
             return response()->json([
                 'message' => 'An unexpected error just happened!',
                 'data'    => []
             ], 500);
         }
+    }
+
+    private function createUserWithRole(string $name, string $email, string $password, string $birthDate, array $roles): User
+    {
+        $roleCommand = new FetchRoleInformationCommand($roles);
+        $role = $this->fetchRoleInformationCommandHandler->handle($roleCommand);
+
+        $userCommand = new CreateUserCommand(
+            $name,
+            $email,
+            $password,
+            Carbon::createFromFormat('Y/m/d', $birthDate),
+            $role
+        );
+
+        $user = $this->createUserHandler->handle($userCommand);
+
+        $setRoleCommand = new SetRoleToUserCommand($user->getId(), $role);
+        $this->setRoleToUserCommandHandler->handle($setRoleCommand);
+
+        return $user;
     }
 
     /**
@@ -99,25 +138,6 @@ class UserController
                 'data'    => []
             ], 500);
         }
-    }
-
-    /**
-     * createUser
-     *
-     * @param  array $data
-     * @return User
-     */
-    private function createUser(array $data): User
-    {
-        $command = new CreateUserCommand(
-            $data['name'],
-            $data['email'],
-            $data['password'],
-            Carbon::createFromFormat('Y/m/d', $data['birth_date']),
-            Roles::CANDIDATE
-        );
-
-        return $this->createUserHandler->handle($command);
     }
 
     /**

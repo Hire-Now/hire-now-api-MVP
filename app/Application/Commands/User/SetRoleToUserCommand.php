@@ -6,23 +6,16 @@ use App\Domain\Attributes\Getter;
 use App\Domain\Attributes\Setter;
 use App\Domain\Entities\Role;
 use App\Domain\Traits\AccessorTrait;
-use Carbon\Carbon;
 
-class CreateUserCommand
+class SetRoleToUserCommand
 {
     use AccessorTrait;
 
     public function __construct(
         #[Getter] #[Setter]
-        private string $name,
-        #[Getter] #[Setter]
-        private string $email,
-        #[Setter] #[Getter]
-        private string $password,
-        #[Setter] #[Getter]
-        private Carbon $birthDate,
+        private string $userId,
         /** @var Role[] */
-        #[Setter] #[Getter]
+        #[Getter] #[Setter]
         private array $role,
     ) {
     }

@@ -2,16 +2,17 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Domain\Entities\Permission;
+use App\Domain\Entities\Role;
 use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
 use App\Domain\Enums\ElementStatus;
-use App\Domain\Enums\Roles;
+use App\Infrastructure\Persistence\Eloquent\Models\Role as RoleModel;
 use App\Infrastructure\Persistence\Eloquent\Models\User as UserModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -101,5 +102,20 @@ class UserRepository implements UserRepositoryInterface
     public function paginate(int $perPage): Collection
     {
         return new Collection();
+    }
+
+    public function setRoleToUser(string $userId, array $roles): void
+    {
+        try {
+            $user = UserModel::findOrFail($userId);
+
+            $user->roles()->syncWithoutDetaching(
+                array_map(function ($role) {
+                    return $role->getId();
+                }, $roles)
+            );
+        } catch (\Throwable $th) {
+            throw new Exception("Error assigning role to user", 0, $th);
+        }
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Infrastructure\Controllers;
 
 use App\Application\Commands\Permission\CreatePermissionCommand;
+use App\Application\Commands\Permission\ListPermissionsCommand;
 use App\Application\Handlers\Permission\CreatePermissionCommandHandler;
-use App\Domain\Entities\Permission;
+use App\Application\Handlers\Permission\ListPermissionsCommandHandler;
 use App\Domain\Entities\Role;
 use App\Infrastructure\Requests\CreatePermissionRequest;
 use Illuminate\Http\JsonResponse;
@@ -15,15 +16,30 @@ class PermissionsController
 
     public function __construct(
         private CreatePermissionCommandHandler $createPermissionCommandHandler,
+        private ListPermissionsCommandHandler $listPermissionsCommandHandler
     ) {
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+
+        $command = new ListPermissionsCommand(
+            $request->query('name') ?? null,
+            $request->query('status') ?? null,
+            $request->query('order_by') ?? 'created',
+            $request->query('order_direction') ?? 'asc',
+        );
+
+        $permissions = $this->listPermissionsCommandHandler->handle($command);
+
+        return response()->json([
+            'status'  => 'SUCCESS',
+            'message' => 'Permissions obtained successfully!',
+            'data'    => $permissions
+        ], 200);
     }
 
     /**

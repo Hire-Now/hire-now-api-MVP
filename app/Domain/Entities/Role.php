@@ -29,7 +29,7 @@ class Role
             'id'          => $this->id,
             'name'        => $this->name,
             'description' => $this->description,
-            'permissions' => $this->permissions
+            'permissions' => array_map(fn(Permission $permission) => $permission->toArray(), $this->permissions ?? []),
         ];
     }
 }

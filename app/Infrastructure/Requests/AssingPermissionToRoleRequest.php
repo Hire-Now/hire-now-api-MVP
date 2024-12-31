@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CreateUserRequest extends FormRequest
+class AssingPermissionToRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,12 +24,8 @@ class CreateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => 'required|string',
-            'email'      => 'required|email:rfc,dns|unique:users',
-            'password'   => 'required|confirmed|min:8',
-            'birth_date' => 'required|date',
-            'roles'      => 'required|array',
-            'roles.*'    => 'string|exists:roles,name'
+            'permissions'   => 'required|array',
+            'permissions.*' => 'uuid'
         ];
     }
 

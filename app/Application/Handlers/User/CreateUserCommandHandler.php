@@ -13,7 +13,8 @@ use Carbon\Carbon;
 class CreateUserCommandHandler
 {
     public function __construct(private UserUseCase $userUseCase)
-    {}
+    {
+    }
 
     public function handle(CreateUserCommand $command): User
     {
@@ -26,7 +27,7 @@ class CreateUserCommandHandler
             $command->getRole(),
             ElementStatus::INACTIVE,
             null,
-            Carbon::now()
+            Carbon::now(),
         ));
     }
 }

@@ -71,13 +71,20 @@ class PermissionRepository implements PermissionRepositoryInterface
         return new Permission();
     }
 
-    public function fetchAll(): Collection
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
     {
-        return new Collection();
-    }
+        $query = PermissionModel::query();
 
-    public function paginate(int $perPage): Collection
-    {
-        return new Collection();
+        if (!is_null($name)) {
+            $query->where('name', 'like', "%{$name}%");
+        }
+
+        if (!is_null($status)) {
+            $query->where('status', $status);
+        }
+
+        $query->orderBy("{$orderBy}_at", $orderDirection);
+
+        return $query->with('roles')->get([ 'id', 'name', 'description', 'status', 'created_at', 'updated_at' ]);
     }
 }

@@ -24,13 +24,12 @@ Route::prefix('v1')->group(function () {
         Route::get('/role', [ RoleController::class, 'index' ]);
         Route::get('/role/{id}', [ RoleController::class, 'show' ]);
         Route::delete('/role/{id}', [ RoleController::class, 'delete' ]);
-
-        Route::post('/role/permission', [ RoleController::class, 'assignPermissionToRole' ]);
+        Route::post('/role/{roleId}/permission', [ RoleController::class, 'assignPermissionToRole' ]);
 
         Route::post('/permission', [ PermissionsController::class, 'create' ]);
         Route::put('/permission', [ PermissionsController::class, 'update' ]);
-        Route::get('/permission/{id}', [ PermissionsController::class, 'index' ]);
-        Route::get('/permission', [ PermissionsController::class, 'show' ]);
+        Route::get('/permission', [ PermissionsController::class, 'index' ]);
+        Route::get('/permission/{id}', [ PermissionsController::class, 'show' ]);
         Route::delete('/permission/{id}', [ PermissionsController::class, 'delete' ]);
     });
 })->middleware([ 'throttle:6,1' ]);

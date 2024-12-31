@@ -2,6 +2,7 @@
 
 namespace App\Domain\Repositories;
 
+use App\Domain\Entities\Role;
 use App\Domain\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -14,4 +15,5 @@ interface UserRepositoryInterface
     public function findByEmail(string $email): User;
     public function fetchAll(): Collection;
     public function paginate(int $perPage): Collection;
+    public function setRoleToUser(string $userId, array $role): void;
 }

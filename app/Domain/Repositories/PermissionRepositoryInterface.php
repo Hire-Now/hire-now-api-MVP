@@ -12,6 +12,5 @@ interface PermissionRepositoryInterface
     public function update(string $id, Permission $entity): Permission;
     public function delete(string $id): bool;
     public function findByEmail(string $email): Permission;
-    public function fetchAll(): Collection;
-    public function paginate(int $perPage): Collection;
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
 }
