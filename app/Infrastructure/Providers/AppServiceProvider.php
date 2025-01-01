@@ -8,6 +8,7 @@ use App\Application\UseCases\PermissionUseCase;
 use App\Application\UseCases\RoleUseCase;
 
 use App\Domain\Contracts\EmailSenderInterface;
+use App\Domain\Contracts\JWTServiceInterface;
 use App\Domain\Contracts\PasswordHasherInterface;
 use App\Domain\Contracts\TokenGeneratorInterface;
 use App\Domain\Repositories\CandidateRepositoryInterface;
@@ -23,6 +24,7 @@ use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\RoleRepository;
 use App\Infrastructure\Persistence\Eloquent\UserRepository;
 use App\Infrastructure\Services\BcryptPasswordHasher;
+use App\Infrastructure\Services\JWTService;
 use App\Infrastructure\Services\QueryLoggerService;
 use App\Infrastructure\Services\TokenGenerator;
 
@@ -47,6 +49,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(PermissionUseCaseInterface::class, PermissionUseCase::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
+
+        $this->app->bind(JWTServiceInterface::class, JWTService::class);
     }
 
     /**

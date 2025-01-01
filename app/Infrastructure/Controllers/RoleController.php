@@ -56,7 +56,7 @@ class RoleController
         }
     }
 
-    public function create(CreateRoleRequest $request): JsonResponse
+    public function store(CreateRoleRequest $request): JsonResponse
     {
         try {
             $command = new CreateRoleCommand(

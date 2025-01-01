@@ -124,4 +124,12 @@ return [
     ],
 
     'enable_query_log' => env('ENABLE_QUERY_LOG', false),
+
+    'user_auth'        => [
+        'jwt_validity_time'      => env('JWT_VALIDITY_TIME', '3600'),
+        'jwt_type_time'          => env('TYPE_TIME', 'minutes'),
+        'public_key_path'        => env('PUBLIC_AUTH_KEY_PATH', ''),
+        'private_key_path'       => env('PRIVATE_AUTH_KEY_PATH', ''),
+        'private_key_passphrase' => env('PRIVATE_KEY_PASSPHRASE', ''),
+    ]
 ];

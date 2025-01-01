@@ -26,7 +26,7 @@ class User
         #[Getter] #[Setter]
         private ?Carbon $birthDate,
         /** @var Role[] */
-        #[Getter] #[Setter]
+        #[Setter]
         private ?array $roles,
         #[Getter] #[Setter]
         private ?ElementStatus $status,
@@ -40,6 +40,11 @@ class User
     public function addRole(string $role)
     {
         $this->roles[] = $role;
+    }
+
+    public function getRoles(): array
+    {
+        return array_map(fn(Role $role) => $role->toArray(), $this->roles ?? []);
     }
 
     public function toArray(): array

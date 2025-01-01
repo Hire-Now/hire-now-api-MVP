@@ -91,7 +91,38 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByEmail(string $email): User
     {
-        return new User();
+        try {
+            $userModel = UserModel::with('roles.permissions')->where([
+                'email'  => $email,
+                'status' => ElementStatus::ACTIVE
+            ])->first();
+
+            $roleEntities = [];
+
+            foreach ($userModel->roles as $role) {
+                $permissionArray = [];
+
+                foreach ($role->permissions as $permission) {
+                    $permissionArray[] = new Permission($permission->id, $permission->name, $permission->description);
+                }
+
+                $roleEntities[] = new Role($role->id, $role->name, $role->description, $permissionArray);
+            }
+
+            return new User(
+                $userModel->id,
+                $userModel->name,
+                $userModel->email,
+                $userModel->password,
+                $userModel->birth_date,
+                $roleEntities,
+                ElementStatus::{strtoupper($userModel->status)},
+                $userModel->created_at,
+                $userModel->last_activity
+            );
+        } catch (\Throwable $th) {
+            throw new Exception("Error fetching user data from database.", 0, $th);
+        }
     }
 
     public function fetchAll(): Collection

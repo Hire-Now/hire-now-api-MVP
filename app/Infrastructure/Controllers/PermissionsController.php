@@ -45,7 +45,7 @@ class PermissionsController
     /**
      * Show the form for creating a new resource.
      */
-    public function create(CreatePermissionRequest $request): JsonResponse
+    public function store(CreatePermissionRequest $request): JsonResponse
     {
         try {
             $command = new CreatePermissionCommand(
