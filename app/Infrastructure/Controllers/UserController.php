@@ -78,6 +78,7 @@ class UserController
             ]);
 
             return response()->json([
+                'status'  => 'ERROR',
                 'message' => 'Failed to create the user. Please try again later.',
                 'data'    => []
             ], 500);
@@ -115,6 +116,7 @@ class UserController
             ]);
 
             return response()->json([
+                'status'  => 'ERROR',
                 'message' => 'Failed to verify email. Please try again later.',
                 'data'    => []
             ], 500);
@@ -213,7 +215,7 @@ class UserController
                 'data'    => [
                     'token'      => $jwt,
                     'type'       => 'Bearer',
-                    'expires_in' => config('app.user_auth.jwt_type_time') . config('app.user_auth.jwt_validity_time')
+                    'expires_in' => config('app.user_auth.jwt_validity_time') . ' ' . config('app.user_auth.jwt_type_time')
                 ]
             ], 200);
         } catch (\Throwable $th) {
@@ -222,6 +224,7 @@ class UserController
             ]);
 
             return response()->json([
+                'status'  => 'ERROR',
                 'message' => 'Failed to authenticate the user, please try again later.',
                 'data'    => []
             ], 500);

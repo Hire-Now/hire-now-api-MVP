@@ -54,4 +54,9 @@ class User extends Model
     {
         return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id');
     }
+
+    public function jwtTokens()
+    {
+        return $this->hasMany(JwtToken::class);
+    }
 }

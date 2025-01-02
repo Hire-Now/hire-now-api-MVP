@@ -13,6 +13,7 @@ use App\Domain\Contracts\PasswordHasherInterface;
 use App\Domain\Contracts\TokenGeneratorInterface;
 use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Domain\Repositories\EmailVerificationRepositoryInterface;
+use App\Domain\Repositories\JwtTokenRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\RoleRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
@@ -20,6 +21,7 @@ use App\Domain\Repositories\UserRepositoryInterface;
 use App\Infrastructure\Mail\EmailSender;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Infrastructure\Persistence\Eloquent\EmailVerificationRepository;
+use App\Infrastructure\Persistence\Eloquent\JwtTokenRepository;
 use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\RoleRepository;
 use App\Infrastructure\Persistence\Eloquent\UserRepository;
@@ -51,6 +53,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
 
         $this->app->bind(JWTServiceInterface::class, JWTService::class);
+        $this->app->bind(JwtTokenRepositoryInterface::class, JwtTokenRepository::class);
+
     }
 
     /**
