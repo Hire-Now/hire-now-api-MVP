@@ -3,40 +3,45 @@
 namespace App\Infrastructure\Controllers;
 
 use Carbon\Carbon;
-use App\Domain\Enums\Roles;
-
-use App\Domain\Entities\User;
 
 use Illuminate\Http\JsonResponse;
+
 use App\Domain\Enums\ElementStatus;
+use App\Domain\Entities\User;
 use App\Domain\Entities\EmailVerification;
 
-use App\Infrastructure\Requests\CreateUserRequest;
 use App\Application\Commands\User\CreateUserCommand;
-use App\Application\Commands\Email\VerifyEmailCommand;
-
 use App\Application\Commands\User\SetRoleToUserCommand;
-use App\Application\Handlers\User\FetchUserCommandHandler;
-use App\Application\Handlers\User\CreateUserCommandHandler;
-use App\Application\Handlers\User\UpdateUserCommandHandler;
-
-use App\Application\Handlers\Email\VerifyEmailCommandHandler;
-use App\Application\Commands\Role\FetchRoleInformationCommand;
-
 use App\Application\Commands\User\FetchUserInformationCommand;
 use App\Application\Commands\User\UpdateUserInformationCommand;
-use App\Application\Commands\Email\SendVerificationEmailCommand;
-use App\Application\Commands\Email\CreateEmailVerificationCommand;
 use App\Application\Commands\User\CheckUserCredentialsCommand;
 use App\Application\Commands\User\GenerateJWTUserCommand;
+use App\Application\Commands\Email\SendVerificationEmailCommand;
+use App\Application\Commands\Email\CreateEmailVerificationCommand;
+use App\Application\Commands\Email\VerifyEmailCommand;
+use App\Application\Commands\Role\FetchRoleInformationCommand;
+
 use App\Application\Handlers\Role\FetchRoleInformationCommandHandler;
 use App\Application\Handlers\User\CheckUserCredentialsCommandHandler;
 use App\Application\Handlers\User\GenerateJWTUserCommandHandler;
 use App\Application\Handlers\User\SetRoleToUserCommandHandler;
-use App\Infrastructure\Requests\AuthenticateUserRequest;
+use App\Application\Handlers\User\FetchUserCommandHandler;
+use App\Application\Handlers\User\CreateUserCommandHandler;
+use App\Application\Handlers\User\UpdateUserCommandHandler;
+use App\Application\Handlers\Email\VerifyEmailCommandHandler;
 
-class UserController
+use App\Application\Contracts\AuthorizationInterface;
+
+use App\Infrastructure\Requests\AuthenticateUserRequest;
+use App\Infrastructure\Requests\CreateUserRequest;
+
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
+
+class UserController extends Controller
 {
+    use AuthorizesRequests;
+
     public function __construct(
         private CreateUserCommandHandler $createUserHandler,
         private VerifyEmailCommandHandler $verifyEmailHandler,
@@ -45,8 +50,46 @@ class UserController
         private FetchRoleInformationCommandHandler $fetchRoleInformationCommandHandler,
         private SetRoleToUserCommandHandler $setRoleToUserCommandHandler,
         private CheckUserCredentialsCommandHandler $checkUserCredentialsCommandHandler,
-        private GenerateJWTUserCommandHandler $generateJWTUserCommandHandler
+        private GenerateJWTUserCommandHandler $generateJWTUserCommandHandler,
+        private AuthorizationInterface $authorizationService
     ) {
+    }
+
+    public function index(Request $request)
+    {
+        try {
+            $request = $request->validated();
+
+
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to authenticate the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
+    }
+
+    public function show(Request $request)
+    {
+        try {
+            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
+
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to get the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
     }
 
     public function store(CreateUserRequest $request): JsonResponse
@@ -230,4 +273,47 @@ class UserController
             ], 500);
         }
     }
+
+    public function update(AuthenticateUserRequest $request)
+    {
+        try {
+            $request = $request->validated();
+
+
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to authenticate the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
+    }
+
+    public function delete(AuthenticateUserRequest $request)
+    {
+        try {
+            $request = $request->validated();
+
+
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to authenticate the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
+    }
+
+    public function assignRoleToUser(Request $request)
+    {
+    }
+
 }
