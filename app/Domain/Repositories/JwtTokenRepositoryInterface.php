@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 interface JwtTokenRepositoryInterface
 {
     public function create(JwtToken $entity): JwtToken;
-    public function findByJtiAndUserId(string $jti, string $userId, string $status = 'valid'): ?User;
+    public function findByJtiAndUserId(string $jti, string $userId, string $status = 'valid'): array;
     public function findById(string $id): ?JwtToken;
     public function update(string $id, JwtToken $entity): JwtToken;
     public function delete(string $id): JwtToken;

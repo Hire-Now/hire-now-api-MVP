@@ -37,7 +37,7 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
         }
     }
 
-    public function findByJtiAndUserId(string $jti, string $userId, string $status = 'valid'): ?User
+    public function findByJtiAndUserId(string $jti, string $userId, string $status = 'valid'): array
     {
         try {
             $jwtTokenModel = ModelsJwtToken::where([
@@ -58,7 +58,7 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
                 $roleEntities[] = new Role($role->id, $role->name, $role->description, $permissionArray);
             }
 
-            return new User(
+            $entity = new User(
                 $userId,
                 $jwtTokenModel->user->name,
                 $jwtTokenModel->user->email,
@@ -69,6 +69,11 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
                 $jwtTokenModel->user->created_at,
                 Carbon::now()
             );
+
+            return [
+                'model'  => $jwtTokenModel->user,
+                'entity' => $entity
+            ];
         } catch (ModelNotFoundException $th) {
             throw new ModelNotFoundException("No records found, invalid token.", 0, $th);
         } catch (\Throwable $th) {

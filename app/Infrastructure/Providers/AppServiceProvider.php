@@ -2,8 +2,10 @@
 
 namespace App\Infrastructure\Providers;
 
+use App\Application\Contracts\AuthorizationInterface;
 use App\Application\Contracts\PermissionUseCaseInterface;
 use App\Application\Contracts\RoleUseCaseInterface;
+use App\Application\Services\AuthorizationService;
 use App\Application\UseCases\PermissionUseCase;
 use App\Application\UseCases\RoleUseCase;
 
@@ -54,7 +56,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(JWTServiceInterface::class, JWTService::class);
         $this->app->bind(JwtTokenRepositoryInterface::class, JwtTokenRepository::class);
-
+        $this->app->bind(AuthorizationInterface::class, AuthorizationService::class);
     }
 
     /**

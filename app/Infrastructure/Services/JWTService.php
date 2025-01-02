@@ -15,6 +15,7 @@ use Illuminate\Validation\UnauthorizedException;
 
 class JWTService implements JWTServiceInterface
 {
+    //todo: Crear job para invalidar tokens
     private ?string $privateKey;
     private ?string $publicKey;
 
@@ -23,15 +24,6 @@ class JWTService implements JWTServiceInterface
         $this->privateKey = Storage::disk('local')->get('keys/' . config('app.user_auth.private_key_path'));
         $this->publicKey = Storage::disk('local')->get('keys/' . config('app.user_auth.public_key_path'));
     }
-
-
-    //     CREATE TABLE jwt_tokens ( //TODO: CREAR TABLA
-    //     id INT AUTO_INCREMENT PRIMARY KEY,
-    //     user_id INT NOT NULL,
-    //     jti VARCHAR(255) NOT NULL,
-    //     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    //     FOREIGN KEY (user_id) REFERENCES users(id)
-    // );
 
     public function generateToken(User $user): string
     {
@@ -75,7 +67,7 @@ class JWTService implements JWTServiceInterface
         return $rolesArray;
     }
 
-    public function validateToken(string $token): User
+    public function validateToken(string $token): array
     {
         try {
             $decoded = JWT::decode($token, new Key($this->publicKey, 'RS256'));

@@ -31,9 +31,9 @@ class JwtAuthMiddleware
                 ], 401);
             }
 
-            $userEntity = $this->jwtService->validateToken($token);
+            $attributes = $this->jwtService->validateToken($token);
 
-            $request->attributes->add([ 'user' => $userEntity ]);
+            $request->attributes->add([ 'user_entity' => $attributes['entity'], 'user_model' => $attributes['model'] ]);
 
             return $next($request);
         } catch (\Exception $e) {

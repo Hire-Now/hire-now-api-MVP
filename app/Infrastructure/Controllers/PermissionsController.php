@@ -11,7 +11,7 @@ use App\Infrastructure\Requests\CreatePermissionRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class PermissionsController
+class PermissionsController extends Controller
 {
 
     public function __construct(
