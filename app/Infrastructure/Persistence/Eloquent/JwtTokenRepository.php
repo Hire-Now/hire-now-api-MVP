@@ -70,12 +70,8 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
                 Carbon::now()
             );
         } catch (ModelNotFoundException $th) {
-            dd(vars: $th);
-
             throw new ModelNotFoundException("No records found, invalid token.", 0, $th);
         } catch (\Throwable $th) {
-            dd(vars: $th);
-
             throw new Exception("Error processing JWT token data.", 0, $th);
         }
     }

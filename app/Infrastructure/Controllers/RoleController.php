@@ -33,6 +33,7 @@ class RoleController
     public function index(Request $request)
     {
         try {
+            // dd($request->attributes->get('user'));
             $command = new ListRolesCommand(
                 $request->query('name') ?? null,
                 $request->query('status') ?? null,
