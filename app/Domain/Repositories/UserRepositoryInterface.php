@@ -13,7 +13,9 @@ interface UserRepositoryInterface
     public function update(string $id, User $entity): User;
     public function delete(string $id): bool;
     public function findByEmail(string $email): User;
-    public function fetchAll(): Collection;
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
     public function paginate(int $perPage): Collection;
-    public function setRoleToUser(string $userId, array $role): void;
+    public function setRolesToUser(string $userId, array $roles): User;
+    public function removeRolesToUser(string $userId, array $roles): User;
+
 }

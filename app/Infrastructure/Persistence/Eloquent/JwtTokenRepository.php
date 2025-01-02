@@ -5,15 +5,13 @@ namespace App\Infrastructure\Persistence\Eloquent;
 use Exception;
 use Carbon\Carbon;
 use App\Domain\Entities\JwtToken;
-use App\Domain\Entities\EmailVerification;
 use App\Domain\Entities\Permission;
 use App\Domain\Entities\Role;
 use App\Domain\Entities\User;
 use App\Domain\Enums\ElementStatus;
-use Illuminate\Database\Eloquent\Collection;
+
 use App\Domain\Repositories\JwtTokenRepositoryInterface;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Infrastructure\Persistence\Eloquent\Models\EmailVerificationToken;
 use App\Infrastructure\Persistence\Eloquent\Models\JwtToken as ModelsJwtToken;
 
 class JwtTokenRepository implements JwtTokenRepositoryInterface
@@ -90,6 +88,7 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
     {
         //
     }
+
     public function delete(string $id): JwtToken
     {
         //

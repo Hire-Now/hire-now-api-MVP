@@ -28,7 +28,7 @@ class UpdateUserCommandHandler
             $command->getBirthDate(),
             null,
             $command->getStatus(),
-            $command->getCreatedAt(),
+            null,
             $command->getLastActivity()
         ));
     }

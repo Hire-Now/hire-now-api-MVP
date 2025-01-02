@@ -39,21 +39,13 @@ class UserRepository implements UserRepositoryInterface
     }
 
     public function findById(string $id): ?User
-    {   //todo: setear roles a la entidad
+    {
         try {
             $userModel = UserModel::with('roles')->findOrFail($id);
 
-            return new User(
-                $userModel->id,
-                $userModel->name,
-                $userModel->email,
-                $userModel->password,
-                $userModel->birth_date,
-                null,
-                ElementStatus::{strtoupper($userModel->status)},
-                $userModel->created_at,
-                $userModel->last_activity
-            );
+            $roleEntities = $this->buildRoleEntity($userModel->roles);
+
+            return $this->buildUserEntity($userModel, $roleEntities);
         } catch (\Throwable $th) {
             throw new Exception("Error fetching user data from database.", 0, $th);
         }
@@ -63,20 +55,31 @@ class UserRepository implements UserRepositoryInterface
     {
         try {
             $date = Carbon::now();
-            //todo: arreglar updates para que no se deban actualizar todos los campos siempre, solo lo requerido
-            $userModel = UserModel::where('id', $id)->update([
+
+            $updateData = array_filter([
                 'name'          => $entity->getName(),
                 'email'         => $entity->getEmail(),
                 'status'        => $entity->getStatus(),
                 'last_activity' => $date,
                 'birth_date'    => $entity->getBirthDate(),
-            ]);
+                'password'      => $entity->getPassword(),
+            ], function ($value) {
+                return !is_null($value) && $value !== '';
+            });
 
-            if (!$userModel) {
-                throw new ModelNotFoundException("An error happened when updating the model, " . UserModel::class);
+            $updated = UserModel::where('id', $id)->update($updateData);
+
+            if (!$updated) {
+                throw new ModelNotFoundException("An error occurred when updating the model, " . UserModel::class);
             }
 
-            $entity->setLastActivity($date);
+            $userModel = UserModel::findOrFail($id);
+
+            $entity->setName($userModel->name);
+            $entity->setEmail($userModel->email);
+            $entity->setStatus(ElementStatus::from($userModel->status));
+            $entity->setBirthDate(new Carbon($userModel->birth_date));
+            $entity->setLastActivity(new Carbon($userModel->last_activity));
 
             return $entity;
         } catch (\Throwable $th) {
@@ -86,7 +89,11 @@ class UserRepository implements UserRepositoryInterface
 
     public function delete(string $id): bool
     {
-        return true;
+        try {
+            return UserModel::findOrFail($id)->delete();
+        } catch (\Throwable $th) {
+            throw new Exception("Failed to delete user with ID: $id", 0, $th);
+        }
     }
 
     public function findByEmail(string $email): User
@@ -97,9 +104,88 @@ class UserRepository implements UserRepositoryInterface
                 'status' => ElementStatus::ACTIVE
             ])->first();
 
+            $roleEntities = $this->buildRoleEntity($userModel->roles);
+
+            return $this->buildUserEntity($userModel, $roleEntities);
+        } catch (\Throwable $th) {
+            throw new Exception("Error fetching user data from database.", 0, $th);
+        }
+    }
+
+    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
+    {
+        try {
+            if (!in_array($orderDirection, [ 'asc', 'desc' ])) {
+                throw new Exception('Order direction param is wrong, permitted values are asc or desc');
+            }
+
+            $query = UserModel::query();
+
+            if (!is_null($name)) {
+                $query->where('name', 'like', "%{$name}%");
+            }
+
+            if (!is_null($status)) {
+                $query->where('status', $status);
+            }
+
+            $query->orderBy("{$orderBy}_at", $orderDirection);
+
+            return $query->with('roles')->get([ 'id', 'name', 'email', 'status', 'birth_date', 'last_activity', 'created_at' ]);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
+    }
+
+    public function paginate(int $perPage): Collection
+    {
+        return new Collection();
+    }
+
+    public function setRolesToUser(string $userId, array $roles): User
+    {
+        try {
+            $user = UserModel::findOrFail($userId);
+
+            $rolesId = [];
+
+            foreach ($roles as $role) {
+                $rolesId[] = $role->getId();
+            }
+
+            $user->roles()->syncWithoutDetaching($rolesId);
+
+            $roles = RoleModel::whereIn('id', $rolesId)->with('permissions')->get();
+
+            $roleEntities = $this->buildRoleEntity($roles);
+
+            return $this->buildUserEntity($user, $roleEntities);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
+    }
+
+    public function removeRolesToUser(string $userId, array $roles): User
+    {
+        try {
+            $user = UserModel::findOrFail($userId);
+
+            $user->roles()->detach($roles);
+
+            $roleEntities = $this->buildRoleEntity($user->roles);
+
+            return $this->buildUserEntity($user, $roleEntities);
+        } catch (\Throwable $th) {
+            throw new Exception($th->getMessage(), 0, $th);
+        }
+    }
+
+    private function buildRoleEntity($roles): array
+    {
+        try {
             $roleEntities = [];
 
-            foreach ($userModel->roles as $role) {
+            foreach ($roles as $role) {
                 $permissionArray = [];
 
                 foreach ($role->permissions as $permission) {
@@ -109,44 +195,26 @@ class UserRepository implements UserRepositoryInterface
                 $roleEntities[] = new Role($role->id, $role->name, $role->description, $permissionArray);
             }
 
-            return new User(
-                $userModel->id,
-                $userModel->name,
-                $userModel->email,
-                $userModel->password,
-                $userModel->birth_date,
-                $roleEntities,
-                ElementStatus::{strtoupper($userModel->status)},
-                $userModel->created_at,
-                $userModel->last_activity
-            );
+            return $roleEntities;
         } catch (\Throwable $th) {
-            throw new Exception("Error fetching user data from database.", 0, $th);
+            dd($th);
+            throw new Exception($th->getMessage(), 0, $th);
         }
     }
 
-    public function fetchAll(): Collection
+    private function buildUserEntity(UserModel $user, array $roles): User
     {
-        return new Collection();
+        return new User(
+            $user->id,
+            $user->name,
+            $user->email,
+            $user->password,
+            $user->birth_date,
+            $roles,
+            ElementStatus::{strtoupper($user->status)},
+            $user->created_at,
+            $user->last_activity
+        );
     }
 
-    public function paginate(int $perPage): Collection
-    {
-        return new Collection();
-    }
-
-    public function setRoleToUser(string $userId, array $roles): void
-    {
-        try {
-            $user = UserModel::findOrFail($userId);
-
-            $user->roles()->syncWithoutDetaching(
-                array_map(function ($role) {
-                    return $role->getId();
-                }, $roles)
-            );
-        } catch (\Throwable $th) {
-            throw new Exception("Error assigning role to user", 0, $th);
-        }
-    }
 }

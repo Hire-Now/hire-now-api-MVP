@@ -8,6 +8,7 @@ use App\Domain\Entities\User;
 use App\Domain\Contracts\PasswordHasherInterface;
 use App\Domain\Contracts\TokenGeneratorInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 
 class UserUseCase
 {
@@ -30,12 +31,21 @@ class UserUseCase
         }
     }
 
-    public function setRoleToUser(string $userId, array $role): void
+    public function setRolesToUser(string $userId, array $roles): User
     {
         try {
-            $this->repository->setRoleToUser($userId, $role);
+            return $this->repository->setRolesToUser($userId, $roles);
         } catch (\Throwable $e) {
             throw new \RuntimeException('Failed to set role to user.', 0, $e);
+        }
+    }
+
+    public function removeRolesToUser(string $userId, array $roles): User
+    {
+        try {
+            return $this->repository->removeRolesToUser($userId, $roles);
+        } catch (\Throwable $e) {
+            throw new \RuntimeException('Failed to remove role to user.', 0, $e);
         }
     }
 
@@ -51,6 +61,9 @@ class UserUseCase
     public function updateUser(User $entity): User
     {
         try {
+            $hashedPassword = $this->passwordHasher->hash($entity->getPassword());
+            $entity->setPassword($hashedPassword);
+
             return $this->repository->update($entity->getId(), $entity);
         } catch (\Throwable $e) {
             throw new \RuntimeException('Failed to update user.', 0, $e);
@@ -78,6 +91,24 @@ class UserUseCase
     {
         try {
             return $this->jwtService->generateToken($user);
+        } catch (\Throwable $th) {
+            throw new \RuntimeException('An unexpected error occurred during authentication.', 0, $th);
+        }
+    }
+
+    public function fetchUsers(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
+    {
+        try {
+            return $this->repository->fetchAll($name, $status, $orderBy, $orderDirection);
+        } catch (\Throwable $th) {
+            throw new \RuntimeException('An unexpected error occurred during authentication.', 0, $th);
+        }
+    }
+
+    public function deleteUser(string $id): bool
+    {
+        try {
+            return $this->repository->delete($id);
         } catch (\Throwable $th) {
             throw new \RuntimeException('An unexpected error occurred during authentication.', 0, $th);
         }

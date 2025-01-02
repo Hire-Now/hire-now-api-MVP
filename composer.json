@@ -13,6 +13,7 @@
         "firebase/php-jwt": "*",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
+        "laravel/telescope": "^5.2",
         "laravel/tinker": "^2.9",
         "resend/resend-laravel": "^0.12"
     },

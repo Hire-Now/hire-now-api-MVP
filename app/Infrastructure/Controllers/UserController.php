@@ -2,6 +2,9 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Application\Commands\User\AssignRoleToUserCommand;
+use App\Infrastructure\Requests\AssignRoleToUserRequest;
+use App\Infrastructure\Requests\RemoveRoleToUserRequest;
 use Carbon\Carbon;
 
 use Illuminate\Http\JsonResponse;
@@ -20,7 +23,9 @@ use App\Application\Commands\Email\SendVerificationEmailCommand;
 use App\Application\Commands\Email\CreateEmailVerificationCommand;
 use App\Application\Commands\Email\VerifyEmailCommand;
 use App\Application\Commands\Role\FetchRoleInformationCommand;
-
+use App\Application\Commands\User\ListUsersCommand;
+use App\Application\Commands\User\RemoveRoleToUserCommand;
+use App\Application\Commands\User\UpdateUserCommand;
 use App\Application\Handlers\Role\FetchRoleInformationCommandHandler;
 use App\Application\Handlers\User\CheckUserCredentialsCommandHandler;
 use App\Application\Handlers\User\GenerateJWTUserCommandHandler;
@@ -31,10 +36,14 @@ use App\Application\Handlers\User\UpdateUserCommandHandler;
 use App\Application\Handlers\Email\VerifyEmailCommandHandler;
 
 use App\Application\Contracts\AuthorizationInterface;
-
+use App\Application\Handlers\User\AssignRoleToUserCommandHandler;
+use App\Application\Handlers\User\DeleteUserCommandHandler;
+use App\Application\Handlers\User\GetUserCommandHandler;
+use App\Application\Handlers\User\ListUsersCommandHandler;
+use App\Application\Handlers\User\RemoveRoleToUserCommandHandler;
 use App\Infrastructure\Requests\AuthenticateUserRequest;
 use App\Infrastructure\Requests\CreateUserRequest;
-
+use App\Infrastructure\Requests\UpdateUserRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -51,36 +60,59 @@ class UserController extends Controller
         private SetRoleToUserCommandHandler $setRoleToUserCommandHandler,
         private CheckUserCredentialsCommandHandler $checkUserCredentialsCommandHandler,
         private GenerateJWTUserCommandHandler $generateJWTUserCommandHandler,
-        private AuthorizationInterface $authorizationService
+        private AuthorizationInterface $authorizationService,
+        private ListUsersCommandHandler $listUsersCommandHandler,
+        private AssignRoleToUserCommandHandler $assignRoleToUserCommandHandler,
+        private RemoveRoleToUserCommandHandler $removeRoleToUserCommandHandler,
+        private GetUserCommandHandler $getUserCommandHandler,
+        private DeleteUserCommandHandler $deleteUserCommandHandler
     ) {
     }
 
     public function index(Request $request)
     {
         try {
-            $request = $request->validated();
+            $command = new ListUsersCommand(
+                $request->query('name') ?? null,
+                $request->query('status') ?? null,
+                $request->query('order_by') ?? 'created',
+                $request->query('order_direction') ?? 'asc',
+            );
 
+            $users = $this->listUsersCommandHandler->handle($command);
 
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'Users obtained succesfully!',
+                'data'    => $users
+            ], 200);
         } catch (\Throwable $th) {
-            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+            logger()->error("Error in UserController@index: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
             ]);
 
             return response()->json([
                 'status'  => 'ERROR',
-                'message' => 'Failed to authenticate the user, please try again later.',
+                'message' => 'Failed to get the users, please try again later.',
                 'data'    => []
             ], 500);
         }
     }
 
-    public function show(Request $request)
+    public function show(Request $request, string $id)
     {
         try {
             $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
 
+            $users = $this->getUserCommandHandler->handle($id);
+
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'Users obtained succesfully!',
+                'data'    => $users->toArray()
+            ], 200);
         } catch (\Throwable $th) {
-            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+            logger()->error("Error in UserController@show: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
             ]);
 
@@ -116,6 +148,7 @@ class UserController extends Controller
                 ]
             ], 200);
         } catch (\Throwable $th) {
+            dd($th);
             logger()->error("Error in UserController@store: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
             ]);
@@ -223,11 +256,10 @@ class UserController extends Controller
                 $user->getId(),
                 $user->getName(),
                 $user->getEmail(),
-                $user->getBirthDate(),
                 null,
-                ElementStatus::ACTIVE,
+                $user->getBirthDate(),
                 Carbon::now(),
-                $user->getCreatedAt()
+                ElementStatus::ACTIVE
             );
 
             return $this->updateUserCommandHandler->handle($command);
@@ -274,12 +306,40 @@ class UserController extends Controller
         }
     }
 
-    public function update(AuthenticateUserRequest $request)
+    public function update(UpdateUserRequest $request, string $id)
     {
         try {
+            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
+
             $request = $request->validated();
+            $userEntity = $request->attributes->get('user_entity');
+            $emailHasChanged = !empty($request['email']) && $request['email'] === $userEntity->getEmail() ? true : false;
 
+            $userCommand = new UpdateUserInformationCommand(
+                $id,
+                $request['name'] ?? null,
+                $request['email'] ?? null,
+                $request['password'] ?? null,
+                $request['birth_date'] ?? null,
+                Carbon::now(),
+                null
+            );
 
+            $user = $this->updateUserCommandHandler->handle($userCommand);
+
+            if ($emailHasChanged) {
+                $emailVerifyLink = $this->sendVerificationEmail(user: $user);
+            }
+
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'User created successfully!',
+                'data'    => [
+                    'user'                  => $user->toArray(),
+                    'email_has_changed'     => $emailHasChanged,
+                    'email_verif_link_sent' => $emailHasChanged && !empty($emailVerifyLink->getId()) ? true : false
+                ]
+            ], 200);
         } catch (\Throwable $th) {
             logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
@@ -293,27 +353,91 @@ class UserController extends Controller
         }
     }
 
-    public function delete(AuthenticateUserRequest $request)
+    public function delete(Request $request, string $id)
     {
         try {
-            $request = $request->validated();
+            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
 
+            $users = $this->deleteUserCommandHandler->handle($id);
 
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'Process executed succesfully!',
+                'data'    => [
+                    'is_user_deleted' => $users
+                ]
+            ], 200);
         } catch (\Throwable $th) {
-            logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
+            logger()->error("Error in UserController@delete: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
             ]);
 
             return response()->json([
                 'status'  => 'ERROR',
-                'message' => 'Failed to authenticate the user, please try again later.',
+                'message' => 'Failed to delete the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
+
+    }
+
+    public function assignRoleToUser(AssignRoleToUserRequest $request, string $userId)
+    {
+        try {
+            $request = $request->validated();
+
+            $command = new AssignRoleToUserCommand(
+                $userId,
+                $request->validated()['roles']
+            );
+
+            $user = $this->assignRoleToUserCommandHandler->handle($command);
+
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'Roles succesfully assigned to the user!',
+                'data'    => $user->toArray()
+            ], 200);
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@assignRoleToUser: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to assign new roles the user, please try again later.',
                 'data'    => []
             ], 500);
         }
     }
 
-    public function assignRoleToUser(Request $request)
+    public function removeRoleToUser(RemoveRoleToUserRequest $request, string $userId)
     {
-    }
+        try {
+            $request = $request->validated();
 
+            $command = new RemoveRoleToUserCommand(
+                $userId,
+                $request->validated()['roles']
+            );
+
+            $user = $this->removeRoleToUserCommandHandler->handle($command);
+
+            return response()->json([
+                'status'  => 'SUCCESS',
+                'message' => 'Roles succesfully removed to the user!',
+                'data'    => $user->toArray()
+            ], 200);
+        } catch (\Throwable $th) {
+            logger()->error("Error in UserController@assignRoleToUser: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to remove roles to the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
+    }
 }

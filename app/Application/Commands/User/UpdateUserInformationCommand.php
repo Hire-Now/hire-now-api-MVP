@@ -20,16 +20,14 @@ class UpdateUserInformationCommand
         private ?string $name,
         #[Getter] #[Setter]
         private ?string $email,
+        #[Getter] #[Setter]
+        private ?string $password,
         #[Setter] #[Getter]
         private ?Carbon $birthDate,
         #[Setter] #[Getter]
-        private ?Roles $role,
-        #[Setter] #[Getter]
-        private ?ElementStatus $status,
-        #[Setter] #[Getter]
         private ?Carbon $lastActivity,
         #[Setter] #[Getter]
-        private ?Carbon $createdAt
+        private ?ElementStatus $status,
     ) {
     }
 }

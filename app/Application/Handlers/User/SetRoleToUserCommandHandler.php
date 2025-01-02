@@ -17,6 +17,6 @@ class SetRoleToUserCommandHandler
 
     public function handle(SetRoleToUserCommand $command): void
     {
-        $this->userUseCase->setRoleToUser($command->getUserId(), $command->getRole());
+        $this->userUseCase->setRolesToUser($command->getUserId(), $command->getRole());
     }
 }
