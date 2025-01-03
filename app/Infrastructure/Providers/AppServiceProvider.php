@@ -3,9 +3,12 @@
 namespace App\Infrastructure\Providers;
 
 use App\Application\Contracts\AuthorizationInterface;
+use App\Application\Contracts\ConsumerAuthInterface;
+use App\Application\Contracts\ConsumerRepositoryInterface;
 use App\Application\Contracts\PermissionUseCaseInterface;
 use App\Application\Contracts\RoleUseCaseInterface;
 use App\Application\Services\AuthorizationService;
+use App\Application\Services\ConsumerAuthService;
 use App\Application\UseCases\PermissionUseCase;
 use App\Application\UseCases\RoleUseCase;
 
@@ -29,6 +32,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\User;
 use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\RoleRepository;
 use App\Infrastructure\Persistence\Eloquent\UserRepository;
+use App\Infrastructure\Repositories\ConsumerRepository;
 use App\Infrastructure\Services\BcryptPasswordHasher;
 use App\Infrastructure\Services\JWTService;
 use App\Infrastructure\Services\QueryLoggerService;
@@ -55,10 +59,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(RoleRepositoryInterface::class, RoleRepository::class);
         $this->app->bind(PermissionUseCaseInterface::class, PermissionUseCase::class);
         $this->app->bind(PermissionRepositoryInterface::class, PermissionRepository::class);
+        $this->app->bind(ConsumerRepositoryInterface::class, ConsumerRepository::class);
 
         $this->app->bind(JWTServiceInterface::class, JWTService::class);
         $this->app->bind(JwtTokenRepositoryInterface::class, JwtTokenRepository::class);
         $this->app->bind(AuthorizationInterface::class, AuthorizationService::class);
+        $this->app->bind(ConsumerAuthInterface::class, ConsumerAuthService::class);
+
+
     }
 
     /**

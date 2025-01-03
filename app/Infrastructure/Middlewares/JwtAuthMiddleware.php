@@ -19,19 +19,19 @@ class JwtAuthMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
+    {//todo: Ajustar para usar basic para generar JWT
         try {
-            $token = $request->bearerToken();
+            $authorization = $request->header('User-Authorization');
 
-            if (!$token) {
+            if (!$authorization) {
                 return response()->json([
                     'status'  => 'ERROR',
-                    'message' => 'JWT was not provided.',
+                    'message' => 'User authorization was not provided.',
                     'data'    => []
                 ], 401);
             }
 
-            $attributes = $this->jwtService->validateToken($token);
+            $attributes = $this->jwtService->validateToken($authorization);
 
             $request->attributes->add([ 'user_entity' => $attributes['entity'], 'user_model' => $attributes['model'] ]);
 
