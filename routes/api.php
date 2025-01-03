@@ -1,18 +1,19 @@
 <?php
 
-use App\Application\Middlewares\CheckPermissionMiddleware;
-use App\Application\Middlewares\CheckRoleMiddleware;
-use App\Application\Middlewares\JwtAuthMiddleware;
+use App\Infrastructure\Middlewares\CheckPermissionMiddleware;
+use App\Infrastructure\Middlewares\CheckRoleMiddleware;
+use App\Infrastructure\Middlewares\ConsumerAuthMiddleware;
+use App\Infrastructure\Middlewares\JwtAuthMiddleware;
 use App\Infrastructure\Controllers\RoleController;
 use App\Infrastructure\Controllers\UserController;
 use App\Infrastructure\Controllers\CandidateController;
 use App\Infrastructure\Controllers\PermissionsController;
+
 use Illuminate\Support\Facades\Route;
 
 //todo: Candidate!!!!
 //todo: Falta crud permission y roles
-//todo: middleware para consumidor de API
-Route::prefix('v1')->middleware([ 'throttle:6,1', JwtAuthMiddleware::class])->group(function () {
+Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class, JwtAuthMiddleware::class])->group(function () {
     Route::post('user/authenticate', [ UserController::class, 'authenticate' ])->withoutMiddleware([ JwtAuthMiddleware::class]);
 
     Route::prefix('user')->group(function () {

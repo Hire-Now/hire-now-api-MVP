@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Application\Middlewares;
+namespace App\Infrastructure\Middlewares;
 
 use App\Application\Contracts\AuthorizationInterface;
 use Closure;
