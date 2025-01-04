@@ -63,7 +63,6 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
         } catch (ModelNotFoundException $th) {
             throw new ModelNotFoundException("No records found, invalid token.", 0, $th);
         } catch (\Throwable $th) {
-            dd($th);
             throw new Exception("Error processing JWT token data.", 0, $th);
         }
     }
