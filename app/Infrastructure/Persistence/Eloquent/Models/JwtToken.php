@@ -13,11 +13,12 @@ class JwtToken extends Model
     protected $table = 'jwt_tokens';
 
     protected $fillable = [
-        'user_id',
+        'entity_id',
         'jti',
         'status',
         'expiry_time',
-        'type_time'
+        'type_time',
+        'owner'
     ];
 
     public $timestamps = true;
@@ -36,12 +37,4 @@ class JwtToken extends Model
         ];
     }
 
-    /**
-     * Relación con el modelo User.
-     * Un JWT Token pertenece a un usuario.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

@@ -125,7 +125,7 @@ class UserController extends Controller
     }
 
     public function store(CreateUserRequest $request): JsonResponse
-    {
+    {   //TODO: ADMIN ROLE CANNOT BE ASSIGN USING A API PETITION, IT MUST BE USED A COMMAND TO CREATE A USER WITH ADMIN ROLE
         try {
             $validatedData = $request->validated();
 
@@ -148,7 +148,6 @@ class UserController extends Controller
                 ]
             ], 200);
         } catch (\Throwable $th) {
-            dd($th);
             logger()->error("Error in UserController@store: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
             ]);
@@ -262,6 +261,7 @@ class UserController extends Controller
                 ElementStatus::ACTIVE
             );
 
+            $command->setUserActivation(true);
             return $this->updateUserCommandHandler->handle($command);
         } catch (\Throwable $th) {
             logger()->error("Error in UserController@activateUser: {$th->getMessage()}", [
@@ -386,9 +386,12 @@ class UserController extends Controller
         try {
             $request = $request->validated();
 
+            $roleCommand = new FetchRoleInformationCommand(roles: $request['roles']);
+            $role = $this->fetchRoleInformationCommandHandler->handle($roleCommand);
+
             $command = new AssignRoleToUserCommand(
                 $userId,
-                $request->validated()['roles']
+                $role
             );
 
             $user = $this->assignRoleToUserCommandHandler->handle($command);

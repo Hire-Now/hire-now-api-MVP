@@ -33,7 +33,9 @@ class User
         #[Getter] #[Setter]
         private ?Carbon $createdAt,
         #[Getter] #[Setter]
-        private ?Carbon $lastActivity
+        private ?Carbon $lastActivity,
+        #[Getter] #[Setter]
+        private ?bool $userActivation = false
     ) {
     }
 

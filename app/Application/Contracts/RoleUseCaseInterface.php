@@ -11,7 +11,6 @@ interface RoleUseCaseInterface
     public function fetchRoles(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
 
     public function fetchRoleByName(array $role): array;
-
     public function createRole(Role $entity): Role;
 
     public function updateRole(Role $entity): Role;

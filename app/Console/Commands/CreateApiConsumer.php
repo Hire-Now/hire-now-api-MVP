@@ -33,7 +33,7 @@ class CreateApiConsumer extends Command
 
         ApiConsumer::create([
             'name'          => $name,
-            'client_id'     => Str::uuid(),
+            'client_id'     => $clientId,
             'client_secret' => bcrypt($clientSecret),
             'description'   => $this->option('description'),
         ]);

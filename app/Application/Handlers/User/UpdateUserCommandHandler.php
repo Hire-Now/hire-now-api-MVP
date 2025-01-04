@@ -29,7 +29,8 @@ class UpdateUserCommandHandler
             null,
             $command->getStatus(),
             null,
-            $command->getLastActivity()
+            $command->getLastActivity(),
+            $command->getUserActivation()
         ));
     }
 }

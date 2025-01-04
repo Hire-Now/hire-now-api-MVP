@@ -147,17 +147,13 @@ class UserRepository implements UserRepositoryInterface
         try {
             $user = UserModel::findOrFail($userId);
 
-            $rolesId = [];
+            $roleIds = array_map(fn($role) => $role->getId(), $roles);
 
-            foreach ($roles as $role) {
-                $rolesId[] = $role->getId();
-            }
+            $user->roles()->syncWithoutDetaching($roleIds);
 
-            $user->roles()->syncWithoutDetaching($rolesId);
+            $user->setRelation('roles', $user->roles()->with('permissions')->get());
 
-            $roles = RoleModel::whereIn('id', $rolesId)->with('permissions')->get();
-
-            $roleEntities = $this->buildRoleEntity($roles);
+            $roleEntities = $this->buildRoleEntity($user->roles);
 
             return $this->buildUserEntity($user, $roleEntities);
         } catch (\Throwable $th) {
@@ -197,7 +193,6 @@ class UserRepository implements UserRepositoryInterface
 
             return $roleEntities;
         } catch (\Throwable $th) {
-            dd($th);
             throw new Exception($th->getMessage(), 0, $th);
         }
     }

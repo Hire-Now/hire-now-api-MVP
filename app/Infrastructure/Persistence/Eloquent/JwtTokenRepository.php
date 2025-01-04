@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
+use App\Application\Contracts\ConsumerRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\Adapters\UserAdapter;
 use Exception;
 use Carbon\Carbon;
 use App\Domain\Entities\JwtToken;
@@ -11,20 +13,27 @@ use App\Domain\Entities\User;
 use App\Domain\Enums\ElementStatus;
 
 use App\Domain\Repositories\JwtTokenRepositoryInterface;
+use App\Domain\Repositories\UserRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\Adapters\ConsumerAdapter;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Infrastructure\Persistence\Eloquent\Models\JwtToken as ModelsJwtToken;
 
 class JwtTokenRepository implements JwtTokenRepositoryInterface
 {
+    public function __construct(private readonly UserRepositoryInterface $userRepositoryInterface, private readonly ConsumerRepositoryInterface $consumerRepositoryInterface)
+    {
+    }
+
     public function create(JwtToken $entity): JwtToken
     {
         try {
             $jwtTokenModel = ModelsJwtToken::create([
-                'user_id'     => $entity->getUserId(),
+                'entity_id'   => $entity->getEntityId(),
                 'jti'         => $entity->getJti(),
                 'status'      => 'valid',
                 'expiry_time' => $entity->getExpiryTime(),
                 'type_time'   => $entity->getTypeTime(),
+                'owner'       => $entity->getOwner()
             ]);
 
             $entity->setId($jwtTokenModel->id);
@@ -39,42 +48,22 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
     {
         try {
             $jwtTokenModel = ModelsJwtToken::where([
-                'jti'     => $jti,
-                'user_id' => $userId,
-                'status'  => $status
-            ])->with('user.roles.permissions')->firstOrFail();
+                'jti'       => $jti,
+                'entity_id' => $userId,
+                'status'    => $status
+            ])->firstOrFail();
 
-            $roleEntities = [];
-
-            foreach ($jwtTokenModel->user->roles ?? [] as $role) {
-                $permissionArray = [];
-
-                foreach ($role->permissions ?? [] as $permission) {
-                    $permissionArray[] = new Permission($permission->id, $permission->name, $permission->description);
-                }
-
-                $roleEntities[] = new Role($role->id, $role->name, $role->description, $permissionArray);
-            }
-
-            $entity = new User(
-                $userId,
-                $jwtTokenModel->user->name,
-                $jwtTokenModel->user->email,
-                $jwtTokenModel->user->password,
-                $jwtTokenModel->user->birth_date,
-                $roleEntities,
-                ElementStatus::{strtoupper($jwtTokenModel->user->status)},
-                $jwtTokenModel->user->created_at,
-                Carbon::now()
-            );
+            $entity = $jwtTokenModel->owner === 'User' ?
+                $this->userRepositoryInterface->findById($userId) : $this->consumerRepositoryInterface->findById($userId);
 
             return [
-                'model'  => $jwtTokenModel->user,
+                'model'  => $jwtTokenModel->owner === 'User' ? UserAdapter::toEloquent($entity) : ConsumerAdapter::toEloquent($entity),
                 'entity' => $entity
             ];
         } catch (ModelNotFoundException $th) {
             throw new ModelNotFoundException("No records found, invalid token.", 0, $th);
         } catch (\Throwable $th) {
+            dd($th);
             throw new Exception("Error processing JWT token data.", 0, $th);
         }
     }

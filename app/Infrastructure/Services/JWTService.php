@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use App\Domain\Entities\User;
 use Illuminate\Support\Facades\Storage;
 use App\Domain\Contracts\JWTServiceInterface;
+use App\Domain\Entities\Consumer;
 use App\Domain\Entities\JwtToken;
 use App\Domain\Repositories\JwtTokenRepositoryInterface;
 use Illuminate\Validation\UnauthorizedException;
@@ -25,19 +26,19 @@ class JWTService implements JWTServiceInterface
         $this->publicKey = Storage::disk('local')->get('keys/' . config('app.user_auth.public_key_path'));
     }
 
-    public function generateToken(User $user): string
-    {
+    public function generateToken(User|Consumer $entity): string
+    {//todo" cambiar tiempo y llaves de crifrado dependiendo de la entidad
         try {
             $issuedAt = Carbon::now()->timestamp;
             $expirationTime = Carbon::now()->add((int) config('app.user_auth.jwt_validity_time'), config('app.user_auth.jwt_type_time'))->timestamp;
             $jwtId = Str::uuid()->toString();
 
             $payload = [
-                'sub'   => $user->getId(),
-                'roles' => $this->userRoles($user->getRoles()),
+                'sub'   => $entity->getId(),
+                'roles' => ($entity instanceof User) ? $this->userRoles($entity->getRoles()) : [],
                 'iat'   => $issuedAt,
                 'exp'   => $expirationTime,
-                'aud'   => '',//frontent or backend
+                'aud'   => ($entity instanceof User) ? '' : config('app.url'),
                 'iss'   => config('app.url'),
                 'jti'   => $jwtId,
             ];
@@ -48,7 +49,14 @@ class JWTService implements JWTServiceInterface
                 'RS256'
             );
 
-            $this->jwtTokenRepository->create(new JwtToken(null, $user->getId(), $jwtId, config('app.user_auth.jwt_validity_time'), config('app.user_auth.jwt_type_time')));
+            $this->jwtTokenRepository->create(new JwtToken(
+                null,
+                $payload['sub'],
+                $jwtId,
+                config('app.user_auth.jwt_validity_time'),
+                config('app.user_auth.jwt_type_time'),
+                ($entity instanceof User) ? 'User' : 'Consumer'
+            ));
 
             return $jwt;
         } catch (\Throwable $th) {

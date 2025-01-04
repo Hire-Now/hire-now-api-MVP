@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Middlewares;
 
 use App\Application\Contracts\ConsumerAuthInterface;
+use App\Domain\Contracts\JWTServiceInterface;
 use App\Infrastructure\Persistence\Eloquent\Models\ApiConsumer;
 use Closure;
 use Illuminate\Http\Request;
@@ -10,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ConsumerAuthMiddleware
 {
-    public function __construct(private ConsumerAuthInterface $authService)
+    public function __construct(private ConsumerAuthInterface $authService, private JWTServiceInterface $jwtService)
     {
     }
 
@@ -32,13 +33,9 @@ class ConsumerAuthMiddleware
                 ], 401);
             }
 
-            $consumer = $this->authService->authenticate($authorization);
+            $attributes = $this->jwtService->validateToken($authorization);
 
-            if (!$consumer) {
-                return response()->json([ 'error' => 'Unauthorized' ], 401);
-            }
-
-            $request->attributes->set('api_consumer', $consumer);
+            $request->attributes->add([ 'user_entity' => $attributes['entity'], 'user_model' => $attributes['model'] ]);
 
             return $next($request);
         } catch (\Exception $e) {

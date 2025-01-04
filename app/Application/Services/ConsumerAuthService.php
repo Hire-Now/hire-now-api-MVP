@@ -18,21 +18,21 @@ class ConsumerAuthService implements ConsumerAuthInterface
 
     public function authenticate(string $authorizationHeader): ?Consumer
     {
-        if (!str_starts_with($authorizationHeader, 'Basic ')) {
-            return null;
+        try {
+            $decoded = base64_decode(substr($authorizationHeader, 6));
+            [ $clientId, $clientSecret ] = explode(':', $decoded, 2);
+
+            $consumer = $this->consumerRepository->findByClientId($clientId);
+
+            if (!$consumer || !password_verify($clientSecret, $consumer->getClientSecret()) || !$consumer->getIsActive()) {
+                return null;
+            }
+
+            $this->consumerRepository->updateLastAccess($consumer);
+
+            return $consumer;
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage(), 0, $th);
         }
-
-        $decoded = base64_decode(substr($authorizationHeader, 6));
-        [ $clientId, $clientSecret ] = explode(':', $decoded, 2);
-
-        $consumer = $this->consumerRepository->findByClientId($clientId);
-
-        if (!$consumer || !password_verify($clientSecret, $consumer->getClientSecret()) || !$consumer->getIsActive()) {
-            return null;
-        }
-
-        $this->consumerRepository->updateLastAccess($consumer);
-
-        return $consumer;
     }
 }

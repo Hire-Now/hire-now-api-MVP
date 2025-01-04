@@ -28,6 +28,8 @@ class UpdateUserInformationCommand
         private ?Carbon $lastActivity,
         #[Setter] #[Getter]
         private ?ElementStatus $status,
+        #[Setter] #[Getter]
+        private bool $userActivation = false
     ) {
     }
 }

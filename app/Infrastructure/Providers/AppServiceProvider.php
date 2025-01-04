@@ -26,13 +26,13 @@ use App\Domain\Repositories\UserRepositoryInterface;
 
 use App\Infrastructure\Mail\EmailSender;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
+use App\Infrastructure\Persistence\Eloquent\ConsumerRepository;
 use App\Infrastructure\Persistence\Eloquent\EmailVerificationRepository;
 use App\Infrastructure\Persistence\Eloquent\JwtTokenRepository;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
 use App\Infrastructure\Persistence\Eloquent\RoleRepository;
 use App\Infrastructure\Persistence\Eloquent\UserRepository;
-use App\Infrastructure\Repositories\ConsumerRepository;
 use App\Infrastructure\Services\BcryptPasswordHasher;
 use App\Infrastructure\Services\JWTService;
 use App\Infrastructure\Services\QueryLoggerService;

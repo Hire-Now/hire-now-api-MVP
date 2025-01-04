@@ -61,8 +61,10 @@ class UserUseCase
     public function updateUser(User $entity): User
     {
         try {
-            $hashedPassword = $this->passwordHasher->hash($entity->getPassword());
-            $entity->setPassword($hashedPassword);
+            if (!$entity->getUserActivation()) {
+                $hashedPassword = $this->passwordHasher->hash($entity->getPassword());
+                $entity->setPassword($hashedPassword);
+            }
 
             return $this->repository->update($entity->getId(), $entity);
         } catch (\Throwable $e) {

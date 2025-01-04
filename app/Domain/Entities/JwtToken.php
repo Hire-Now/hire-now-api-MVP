@@ -14,13 +14,15 @@ class JwtToken
         #[Getter] #[Setter]
         private ?string $id,
         #[Getter] #[Setter]
-        private ?string $userId,
+        private ?string $entityId,
         #[Getter] #[Setter]
         private ?string $jti,
         #[Getter] #[Setter]
         private ?string $expiryTime,
         #[Getter] #[Setter]
         private ?string $typeTime,
+        #[Getter] #[Setter]
+        private ?string $owner,
     ) {
     }
 
@@ -28,10 +30,11 @@ class JwtToken
     {
         return [
             'id'         => $this->id,
-            'userId'     => $this->userId,
+            'entityId'   => $this->entityId,
             'jti'        => $this->jti,
             'expiryTime' => $this->expiryTime,
             'typeTime'   => $this->typeTime,
+            'owner'      => $this->owner,
         ];
     }
 }

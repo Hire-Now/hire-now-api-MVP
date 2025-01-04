@@ -7,12 +7,17 @@ use App\Infrastructure\Middlewares\JwtAuthMiddleware;
 use App\Infrastructure\Controllers\RoleController;
 use App\Infrastructure\Controllers\UserController;
 use App\Infrastructure\Controllers\CandidateController;
+use App\Infrastructure\Controllers\ConsumerController;
 use App\Infrastructure\Controllers\PermissionsController;
 
 use Illuminate\Support\Facades\Route;
 
 //todo: Candidate!!!!
 //todo: Falta crud permission y roles
+
+Route::post('consumer/authenticate', [ ConsumerController::class, 'authenticate' ])
+    ->middleware([ 'throttle:6,1' ]);
+
 Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class, JwtAuthMiddleware::class])->group(function () {
     Route::post('user/authenticate', [ UserController::class, 'authenticate' ])->withoutMiddleware([ JwtAuthMiddleware::class]);
 
@@ -24,12 +29,12 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         Route::delete('', [ UserController::class, 'delete' ]);
 
         Route::post('{userId}/role/', [ UserController::class, 'assignRoleToUser' ])
-            ->middleware([ CheckRoleMiddleware::class . ':admin', CheckPermissionMiddleware::class . ':assign_roles' ]);
+            ->middleware([ CheckRoleMiddleware::class . ':admin' ]);//CheckPermissionMiddleware::class . ':assign_roles'
 
         Route::get('email/verify/{id}/{hash}', [ UserController::class, 'verifyEmail' ])
             ->name('email.verify')
             ->middleware([ 'signed' ])
-            ->withoutMiddleware([ JwtAuthMiddleware::class]);
+            ->withoutMiddleware([ JwtAuthMiddleware::class, ConsumerAuthMiddleware::class]);
     });
 
     Route::prefix('candidate')->middleware([ CheckRoleMiddleware::class . ':candidate' ])->group(function () {

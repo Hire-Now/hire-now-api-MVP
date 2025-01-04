@@ -13,9 +13,9 @@ class AssignRoleToUserCommand
     public function __construct(
         #[Getter] #[Setter]
         private ?string $userId,
-        /** @var uuid[] */
-        #[Getter] #[Setter]
-        private ?array $roles
+        /** @var Role[] */
+        #[Setter] #[Getter]
+        private array $roles,
     ) {
     }
 }

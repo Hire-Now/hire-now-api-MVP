@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::table('jwt_tokens', function (Blueprint $table) {
             $table->enum('status', [ 'valid', 'invalid' ])->after('jti');
+            $table->enum('owner', [ 'User', 'Consumer' ]);
             $table->string('expiry_time')->after('status');
             $table->string('type_time')->after('expiry_time');
         });

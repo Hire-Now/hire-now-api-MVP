@@ -24,4 +24,9 @@ class ApiConsumer extends Model
     protected $hidden = [
         'client_secret',
     ];
+
+    public function jwtTokens()
+    {
+        return $this->hasMany(JwtToken::class);
+    }
 }

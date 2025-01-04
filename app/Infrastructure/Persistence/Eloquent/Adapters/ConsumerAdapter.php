@@ -30,7 +30,7 @@ class ConsumerAdapter
         $eloquentConsumer->client_id = $domainConsumer->getClientId();
         $eloquentConsumer->client_secret = $domainConsumer->getClientSecret();
         $eloquentConsumer->description = $domainConsumer->getDescription();
-        $eloquentConsumer->is_active = $domainConsumer->isActive();
+        $eloquentConsumer->is_active = $domainConsumer->getIsActive();
         $eloquentConsumer->last_access_at = $domainConsumer->getLastAccessAt()
             ? $domainConsumer->getLastAccessAt()->format('Y-m-d H:i:s')
             : null;

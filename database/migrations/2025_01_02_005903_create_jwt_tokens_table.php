@@ -12,9 +12,8 @@ return new class extends Migration {
     {
         Schema::create('jwt_tokens', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('user_id');
+            $table->uuid('entity_id')->nullable();
             $table->uuid('jti');
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });
