@@ -161,7 +161,7 @@ class UserController extends Controller
     }
 
     public function verifyEmail(string $id, string $hash): JsonResponse
-    {
+    {//todo: Implementar tiempo de expiracion para validacion de email, 10 min para validar si no genera nuevo enlace
         try {
             $fetchUserInformationcommand = new FetchUserInformationCommand($id, null);
             $user = $this->fetchUserCommandHandler->handle($fetchUserInformationcommand);
