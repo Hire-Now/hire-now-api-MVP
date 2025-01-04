@@ -168,6 +168,8 @@ class UserRepository implements UserRepositoryInterface
 
             $user->roles()->detach($roles);
 
+            $user->setRelation('roles', $user->roles()->with('permissions')->get());
+
             $roleEntities = $this->buildRoleEntity($user->roles);
 
             return $this->buildUserEntity($user, $roleEntities);

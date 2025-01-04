@@ -421,7 +421,7 @@ class UserController extends Controller
 
             $command = new RemoveRoleToUserCommand(
                 $userId,
-                $request->validated()['roles']
+                $request['roles']
             );
 
             $user = $this->removeRoleToUserCommandHandler->handle($command);

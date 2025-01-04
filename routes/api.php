@@ -31,6 +31,9 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         Route::post('{userId}/role/', [ UserController::class, 'assignRoleToUser' ])
             ->middleware([ CheckRoleMiddleware::class . ':admin' ]);//CheckPermissionMiddleware::class . ':assign_roles'
 
+        Route::delete('{userId}/role/', [ UserController::class, 'removeRoleToUser' ])
+            ->middleware([ CheckRoleMiddleware::class . ':admin' ]);//CheckPermissionMiddleware::class . ':assign_roles'
+
         Route::get('email/verify/{id}/{hash}', [ UserController::class, 'verifyEmail' ])
             ->name('email.verify')
             ->middleware([ 'signed' ])
