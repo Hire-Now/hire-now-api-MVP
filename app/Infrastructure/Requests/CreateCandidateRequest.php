@@ -28,12 +28,13 @@ class CreateCandidateRequest extends FormRequest
             'languages.*'           => 'string',
             'yearsOfExperience'     => 'required|integer|min:0',
             'previousExperiences'   => 'required|array|min:1',
-            'previousExperiences.*' => 'string',
+            'previousExperiences.*' => 'json',
             'education'             => 'required|array|min:1',
-            'education.*'           => 'string',
-            'uploadedCV'            => 'nullable|file|mimes:pdf,doc,docx|max:5120',
-            'uploadedPitch'         => 'nullable|array',
-            'uploadedPitch.*'       => 'file|mimes:mp4,mov,avi|max:10240',
+            'education.*'           => 'json',
+            'uploadedCV'            => 'nullable|array|min:1',
+            'uploadedCV.*'          => 'uuid|string',
+            'uploadedPitch'         => 'nullable|array|min:1',
+            'uploadedPitch.*'       => 'uuid|string',
         ];
     }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Infrastructure\Controllers\FilesController;
 use App\Infrastructure\Middlewares\CheckPermissionMiddleware;
 use App\Infrastructure\Middlewares\CheckRoleMiddleware;
 use App\Infrastructure\Middlewares\ConsumerAuthMiddleware;
@@ -28,12 +29,6 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         Route::put('', [ UserController::class, 'update' ]);
         Route::delete('', [ UserController::class, 'delete' ]);
 
-        Route::post('{userId}/role/', [ UserController::class, 'assignRoleToUser' ])
-            ->middleware([ CheckRoleMiddleware::class . ':admin' ]);//CheckPermissionMiddleware::class . ':assign_roles'
-
-        Route::delete('{userId}/role/', [ UserController::class, 'removeRoleToUser' ])
-            ->middleware([ CheckRoleMiddleware::class . ':admin' ]);//CheckPermissionMiddleware::class . ':assign_roles'
-
         Route::get('email/verify/{id}/{hash}', [ UserController::class, 'verifyEmail' ])
             ->name('email.verify')
             ->middleware([ 'signed' ])
@@ -41,17 +36,44 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
     });
 
     Route::prefix('candidate')->middleware([ CheckRoleMiddleware::class . ':candidate' ])->group(function () {
+        //todo: Crear servicio de subida de pitch's y cv's
+        //todo: Crear ruta que liste las habilidades existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
+        //todo: Crear ruta que liste las idiomas existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
+        //todo: Crear ruta que liste las instituciones existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
+        //todo: Crear ruta que liste los degrees existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         Route::get('', [ CandidateController::class, 'index' ])
-            ->middleware([ CheckPermissionMiddleware::class . ':index_candidates', CheckRoleMiddleware::class . ':admin' ])
+            ->middleware([
+                CheckPermissionMiddleware::class . ':index_candidates',
+                CheckRoleMiddleware::class . ':recruiter',
+                CheckRoleMiddleware::class . ':executive',
+            ])
             ->withoutMiddleware([ CheckRoleMiddleware::class . ':candidate' ]);
 
-        Route::get('/{id}', [ CandidateController::class, 'show' ]);
-        Route::post('', [ CandidateController::class, 'store' ])->withoutMiddleware([ JwtAuthMiddleware::class]);
+        Route::get('/{id}', [ CandidateController::class, 'show' ])
+            ->middleware([
+                CheckPermissionMiddleware::class . ':index_candidates',
+                CheckRoleMiddleware::class . ':recruiter',
+                CheckRoleMiddleware::class . ':executive',
+            ]);
+
+        Route::post('', [ CandidateController::class, 'store' ]);
         Route::put('', [ CandidateController::class, 'update' ]);
         Route::delete('', [ CandidateController::class, 'delete' ]);
     });
 
+    Route::prefix('files')->group(function () {
+        Route::post('', [ FilesController::class, 'index' ]);
+        Route::post('', [ FilesController::class, 'show' ]);
+        Route::post('', [ FilesController::class, 'upload' ]);
+        Route::post('', [ FilesController::class, 'delete' ]);
+    });
+
     Route::prefix('admin')->middleware([ CheckRoleMiddleware::class . ':admin' ])->group(function () {
+        Route::prefix('user')->group(function () {
+            Route::post('{userId}/role/', [ UserController::class, 'assignRoleToUser' ]);//->middleware([ CheckPermissionMiddleware::class . ':assign_roles' ]);
+            Route::delete('{userId}/role/', [ UserController::class, 'removeRoleToUser' ]);//->middleware([ CheckPermissionMiddleware::class . ':assign_roles' ]);
+        });
+
         Route::prefix('role')->group(function () {
             Route::get('', [ RoleController::class, 'index' ]);//->middleware([ CheckPermissionMiddleware::class . ':index_roles' ]);
             Route::get('/{id}', [ RoleController::class, 'show' ]);//->middleware([ CheckPermissionMiddleware::class . ':index_roles' ]);

@@ -24,7 +24,7 @@ class AuthorizationService implements AuthorizationInterface
     public function hasRole(User $user, string $role): bool
     {
         foreach ($user->roles ?? [] as $roleIter) {
-            if ($roleIter->name === $role) {
+            if ($roleIter->name === $role || $roleIter->name === 'admin') {
                 return true;
             }
         }
