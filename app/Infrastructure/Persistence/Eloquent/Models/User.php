@@ -58,4 +58,9 @@ class User extends Model
     {
         return $this->hasMany(JwtToken::class);
     }
+
+    public function files()
+    {
+        return $this->morphMany(File::class, 'owner');
+    }
 }

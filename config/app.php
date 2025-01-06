@@ -131,5 +131,10 @@ return [
         'public_key_path'        => env('PUBLIC_AUTH_KEY_PATH', ''),
         'private_key_path'       => env('PRIVATE_AUTH_KEY_PATH', ''),
         'private_key_passphrase' => env('PRIVATE_KEY_PASSPHRASE', ''),
+    ],
+
+    'vt'               => [
+        'base_uri' => env('VIRUS_TOTAL_URL', ''),
+        'api_key'  => env('VIRUS_TOTAL_API_KEY', '')
     ]
 ];

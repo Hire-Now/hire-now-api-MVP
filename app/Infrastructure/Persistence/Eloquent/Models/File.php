@@ -19,7 +19,10 @@ class File extends Model
         'size',
         'owner_type',
         'owner_id',
-        'metadata'
+        'metadata',
+        'language',
+        'vt_scan_id',
+        'scan_status'
     ];
 
     public $timestamps = true;

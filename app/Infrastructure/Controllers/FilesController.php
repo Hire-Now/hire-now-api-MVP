@@ -2,9 +2,10 @@
 
 namespace App\Infrastructure\Controllers;
 
+use App\Infrastructure\Jobs\ScanFileWithVirusTotal;
+use App\Infrastructure\Persistence\Eloquent\Models\File;
 use App\Infrastructure\Requests\UploadFileRequest;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Illuminate\Support\Str;
 
 class FilesController
 {
@@ -18,10 +19,63 @@ class FilesController
         //
     }
 
-    public function upload(Request $request)
+    public function upload(UploadFileRequest $request)
     {
-        $this->validateUploadedFiles($request->all());
-        return response()->json([ 'message' => 'Files uploaded successfully.' ], 200);
+        try {
+            $user = $request->attributes->get('user_model');
+
+            $request = $request->validated();
+
+            $file = $request['videos'][0];
+
+            // Genera un slug a partir del nombre del archivo y obtiene su extensión
+            $slug = Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
+            $extension = $file->getClientOriginalExtension();
+
+            $fileSizeInBytes = $file->getSize();
+
+            $fileSizeInKB = round($fileSizeInBytes / 1024, 2);
+
+            $filename = $slug . '-' . uniqid() . '.' . $extension;
+
+            // Almacena el archivo en el storage bajo el directorio 'uploads' con el nombre generado
+            $path = $file->storeAs('uploads', $filename);
+
+            // Guarda la información del archivo en la base de datos
+            $fileRecord = $user->files()->create([
+                'name'        => $filename,
+                'path'        => $path,
+                'type'        => $extension,
+                'size'        => $fileSizeInKB,
+                'language'    => $request['video_languages'][0],
+                'vt_scan_id'  => '_',
+                'scan_status' => 'pending',
+                'metadata'    => json_encode([
+                    'uploaded_by' => $user->roles[0]->name,
+                    'visibility'  => 'private',
+                ]),
+            ]);
+
+            // Encola el trabajo para verificar el archivo
+            ScanFileWithVirusTotal::dispatch($fileRecord->id);
+
+            return response()->json([
+                'message' => 'Archivo subido correctamente. Está siendo procesado.',
+            ]);
+
+            return response()->json([ 'message' => 'Files uploaded successfully.' ], 200);
+        } catch (\Throwable $th) {
+            dd($th);
+            logger()->error("Error in UserController@show: {$th->getMessage()}", [
+                'trace' => $th->getTraceAsString()
+            ]);
+
+            return response()->json([
+                'status'  => 'ERROR',
+                'message' => 'Failed to get the user, please try again later.',
+                'data'    => []
+            ], 500);
+        }
     }
 
     public function delete()
@@ -33,48 +87,4 @@ class FilesController
     {
         //
     }
-
-    private function validateUploadedFiles(array $data)
-    {
-        $this->validateFiles($data['videos'] ?? [], [ 'video/mp4', 'video/avi', 'video/mpeg' ], 512000, 'videos');
-        $this->validateLanguages($data['video_languages'] ?? [], $data['videos'] ?? [], 'video languages');
-
-        if (isset($data['cvs'])) {
-            $this->validateFiles($data['cvs'], [ 'application/pdf' ], 10240, 'CVs');
-            $this->validateLanguages($data['languages'] ?? [], $data['cvs'], 'CV languages');
-        }
-    }
-
-    private function validateFiles(array $files, array $allowedMimeTypes, int $maxSize, string $type)
-    {
-        if (empty($files)) {
-            throw new BadRequestException("The $type field is required and must contain at least one file.");
-        }
-
-        foreach ($files as $file) {
-            if (!isset($file['mime_type'], $file['size']) || !in_array($file['mime_type'], $allowedMimeTypes)) {
-                throw new BadRequestException("Invalid $type file type. Allowed types: " . implode(', ', $allowedMimeTypes));
-            }
-
-            if ($file['size'] > $maxSize) {
-                throw new BadRequestException("The $type file exceeds the maximum allowed size of {$maxSize} KB.");
-            }
-        }
-    }
-
-    private function validateLanguages(array $languages, array $files, string $context)
-    {
-        $allowedLanguages = [ 'en', 'es', 'fr', 'de', 'it', 'pt' ];//todo: tabla
-
-        if (count($languages) !== count($files)) {
-            throw new BadRequestException("The number of $context must match the number of files.");
-        }
-
-        foreach ($languages as $language) {
-            if (!in_array($language, $allowedLanguages)) {
-                throw new BadRequestException("Invalid language: $language. Allowed languages: " . implode(', ', $allowedLanguages));
-            }
-        }
-    }
-
 }

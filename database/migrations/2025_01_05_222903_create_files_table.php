@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->uuid('owner_id');
             $table->json('metadata')->nullable();
             $table->string('language');
+            $table->string('vt_scan_id');
+            $table->string('scan_status')->default('pending');// (pending, scanning, safe, unsafe)
             $table->timestamps();
             $table->softDeletes();
             $table->index([ 'owner_type', 'owner_id' ]);
