@@ -66,4 +66,9 @@ class Candidate extends Model
     {
         return $this->hasMany(ActiveProcess::class);
     }
+
+    public function files()
+    {
+        return $this->morphMany(File::class, 'owner');
+    }
 }

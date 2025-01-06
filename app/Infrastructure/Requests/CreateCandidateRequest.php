@@ -31,10 +31,10 @@ class CreateCandidateRequest extends FormRequest
             'previousExperiences.*' => 'json',
             'education'             => 'required|array|min:1',
             'education.*'           => 'json',
-            'uploadedCV'            => 'nullable|array|min:1',
-            'uploadedCV.*'          => 'uuid|string',
-            'uploadedPitch'         => 'nullable|array|min:1',
-            'uploadedPitch.*'       => 'uuid|string',
+            // 'uploadedCV'            => 'nullable|array|min:1',
+            // 'uploadedCV.*'          => 'uuid|string',
+            // 'uploadedPitch'         => 'nullable|array|min:1',
+            // 'uploadedPitch.*'       => 'uuid|string',
         ];
     }
 

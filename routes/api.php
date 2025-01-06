@@ -36,7 +36,6 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
     });
 
     Route::prefix('candidate')->middleware([ CheckRoleMiddleware::class . ':candidate' ])->group(function () {
-        //todo: Crear servicio de subida de pitch's y cv's
         //todo: Crear ruta que liste las habilidades existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         //todo: Crear ruta que liste las idiomas existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         //todo: Crear ruta que liste las instituciones existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
@@ -62,10 +61,11 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
     });
 
     Route::prefix('files')->group(function () {
-        Route::post('', [ FilesController::class, 'index' ]);
-        Route::post('', [ FilesController::class, 'show' ]);
+        Route::get('', [ FilesController::class, 'index' ]);
+        Route::get('/{id}', [ FilesController::class, 'show' ]);
         Route::post('', [ FilesController::class, 'upload' ]);
-        Route::post('', [ FilesController::class, 'delete' ]);
+        Route::put('/{id}', [ FilesController::class, 'update' ]);
+        Route::delete('/{id}', [ FilesController::class, 'delete' ]);
     });
 
     Route::prefix('admin')->middleware([ CheckRoleMiddleware::class . ':admin' ])->group(function () {
