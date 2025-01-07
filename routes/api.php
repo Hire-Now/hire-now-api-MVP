@@ -40,6 +40,8 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         //todo: Crear ruta que liste las idiomas existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         //todo: Crear ruta que liste las instituciones existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         //todo: Crear ruta que liste los degrees existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
+
+        Route::get('professional/profile/suggest', [ FilesController::class, 'improveAndSuggestCVInfoWithAI' ]);
         Route::get('', [ CandidateController::class, 'index' ])
             ->middleware([
                 CheckPermissionMiddleware::class . ':index_candidates',

@@ -5,7 +5,6 @@ namespace App\Domain\Entities;
 use App\Domain\Attributes\Getter;
 use App\Domain\Attributes\Setter;
 use App\Domain\Traits\AccessorTrait;
-use Carbon\Carbon;
 
 
 class File
@@ -35,6 +34,10 @@ class File
         private ?string $vtScanId,
         #[Getter] #[Setter]
         private ?string $scanResult,
+        #[Getter] #[Setter]
+        private ?bool $isCV,
+        #[Getter] #[Setter]
+        private ?bool $isMainCV
     ) {
     }
 
@@ -51,7 +54,9 @@ class File
             'language'     => $this->language,
             'upload_date'  => $this->uploadDate,
             'vt_scan_id'   => $this->vtScanId,
-            'scan_status'  => $this->scanResult
+            'scan_status'  => $this->scanResult,
+            'is_cv'        => $this->isCV,
+            'is_main_cv'   => $this->isMainCV,
         ];
     }
 }

@@ -6,6 +6,7 @@ use App\Application\Contracts\FileUseCaseInterface;
 use App\Domain\Entities\File;
 use App\Domain\Repositories\FileRepositoryInterface;
 use App\Infrastructure\Jobs\ScanFileWithVirusTotal;
+use App\Infrastructure\Persistence\Eloquent\Models\File as ModelsFile;
 use App\Infrastructure\Persistence\Eloquent\Models\Role;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Illuminate\Support\Collection;
@@ -55,7 +56,9 @@ class FileUseCase implements FileUseCaseInterface
                     $fileParams['language'],
                     null,
                     null,
-                    null
+                    null,
+                    $fileParams["is_cv"] ?? false,
+                    $fileParams["is_main_cv"] ?? false
                 );
             }
 
@@ -88,9 +91,10 @@ class FileUseCase implements FileUseCaseInterface
     {
         try {
             $index = 0;
+            $role = $this->getMainRole($user->roles);
 
             foreach ($storedFiles as $storedFile) {
-                $storedFiles[$index] = $this->fileRepository->create($user, $storedFile);
+                $storedFiles[$index] = $this->fileRepository->create($user, $storedFile, $role);
                 $index++;
             }
 
@@ -104,10 +108,25 @@ class FileUseCase implements FileUseCaseInterface
     {
         try {
             foreach ($savedFiles as $savedFile) {
+                //todo: esto debe ir a un adaptador de salida
                 ScanFileWithVirusTotal::dispatch($savedFile->getId());
             }
         } catch (\Throwable $th) {
             throw new \Exception("File could not be saved into database due to an error", 0, $th);
+        }
+    }
+
+    public function getFileWithCustomizedConditions(array $queryConditions): File
+    {
+        try {
+            $fileEntity = $this->fileRepository->getFileWithCustomizedConditions($queryConditions);
+
+            $parser = new \Smalot\PdfParser\Parser();
+            $pdf = $parser->parseFile(storage_path("app/{$fileEntity->getFilePath()}"));
+
+            dd($pdf->getText());
+        } catch (\Throwable $th) {
+            throw new \Exception("File could not be found due to an error", 0, $th);
         }
     }
 }

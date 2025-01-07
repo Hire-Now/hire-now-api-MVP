@@ -29,6 +29,8 @@ class UploadFileRequest extends FormRequest
             'files.*.language'   => 'required|in:en,es,fr,de,it,pt',
             'files.*.visibility' => 'required|in:public,private',
             'files.*.type'       => 'required|in:video,pdf',
+            'files.*.is_cv'      => 'sometimes|boolean',
+            'files.*.is_main_cv' => 'required_with:files.*.is_cv|boolean',
         ];
     }
 

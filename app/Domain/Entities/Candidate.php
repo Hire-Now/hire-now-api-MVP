@@ -20,6 +20,7 @@ class Candidate
         /** @var Language[]*/
         #[Getter] #[Setter]
         private array $languages,
+        #[Getter] #[Setter]
         private int $yearsOfExperience,
         /** @var PreviousExperiences[]*/
         #[Getter] #[Setter]
@@ -28,22 +29,32 @@ class Candidate
         /** @var Education[]*/
         private array $education,
         #[Getter] #[Setter]
-        private ?string $uploadedCV,
+        private ?string $professionalSummary,
         #[Getter] #[Setter]
-        private ?array $uploadedPitch,
-        /** @var LanguagesGrades[]*/
+        private ?array $certifications,
         #[Getter] #[Setter]
-        private ?array $languagesGrades,
-        /** @var TechnicalGrades[]*/
+        private ?array $contactInfo,
         #[Getter] #[Setter]
-        private ?array $technicalGrades,
-        /** @var CompletedAssesments[]*/
-        #[Getter] #[Setter]
-        private ?array $completedAssesments,
-        /** @var ActiveProcesses[]*/
-        #[Getter] #[Setter]
-        private ?array $activeProcesses,
-        #[Getter] #[Setter]
-        private ?string $generatedPlatformCV,
-    ) {}
+        private ?array $portfolioLinks,
+    ) {
+    }
+
+    //     #[Getter] #[Setter]
+    // private ?string $uploadedCV,
+    // #[Getter] #[Setter]
+    // private ?array $uploadedPitch,
+    //     /** @var LanguagesGrades[]*/
+    // #[Getter] #[Setter]
+    // private ?array $languagesGrades,
+    // /** @var TechnicalGrades[]*/
+    // #[Getter] #[Setter]
+    // private ?array $technicalGrades,
+    // /** @var CompletedAssesments[]*/
+    // #[Getter] #[Setter]
+    // private ?array $completedAssesments,
+    // /** @var ActiveProcesses[]*/
+    // #[Getter] #[Setter]
+    // private ?array $activeProcesses,
+    // #[Getter] #[Setter]
+    // private ?string $generatedPlatformCV,
 }
