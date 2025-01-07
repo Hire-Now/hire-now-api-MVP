@@ -21,12 +21,12 @@ class FilesController
     }
     public function index()
     {
-        //
+        //todo: solo el usuario dueno o el del rol correspondiente podra visualizar archivos
     }
 
     public function show()
     {
-        //
+        //todo: solo el usuario dueno o el del rol correspondiente podra visualizar archivos
     }
 
     public function upload(UploadFileRequest $request)

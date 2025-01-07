@@ -32,14 +32,20 @@ class AuthorizationService implements AuthorizationInterface
         return false;
     }
 
-    public function userPolicy(string $entityId, User $model): bool
+    public function userPolicy(string $entityId, string $resourceId, User $model, array $allowedRoles = []): bool
     {
-        $isValidAction = $entityId === $model->id || $this->hasRole($model, 'admin');
+        $isValidAction = $entityId === $resourceId;
 
-        if (!$isValidAction) {
-            throw new UnauthorizedException('Unauthorized action.', 0);
+        $allowedRoles[] = 'admin';
+
+        $hasAllowedRole = collect($allowedRoles)->contains(function ($role) use ($model) {
+            return $this->hasRole($model, $role);
+        });
+
+        if (!$isValidAction && !$hasAllowedRole) {
+            throw new UnauthorizedException('Unauthorized action.', 403);
         }
 
-        return $isValidAction;
+        return $isValidAction || $hasAllowedRole;
     }
 }

@@ -46,6 +46,7 @@ use App\Infrastructure\Requests\CreateUserRequest;
 use App\Infrastructure\Requests\UpdateUserRequest;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Validation\UnauthorizedException;
 
 class UserController extends Controller
 {
@@ -102,15 +103,26 @@ class UserController extends Controller
     public function show(Request $request, string $id)
     {
         try {
-            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
+            $user = $request->attributes->get('user_model');
+            $entityId = $request->attributes->get('user_entity')->getId();
+
+            $this->authorizationService->userPolicy($entityId, $id, $user, [ 'recruiter', 'executive' ]);
 
             $users = $this->getUserCommandHandler->handle($id);
 
             return response()->json([
                 'status'  => 'SUCCESS',
-                'message' => 'Users obtained succesfully!',
+                'message' => 'Users obtained successfully!',
                 'data'    => $users->toArray()
             ], 200);
+
+        } catch (UnauthorizedException $e) {
+            return response()->json([
+                'status'  => 'FORBIDDEN',
+                'message' => $e->getMessage(),
+                'data'    => []
+            ], 403);
+
         } catch (\Throwable $th) {
             logger()->error("Error in UserController@show: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
@@ -309,7 +321,10 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, string $id)
     {
         try {
-            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
+            $user = $request->attributes->get('user_model');
+            $entityId = $request->attributes->get('user_entity')->getId();
+
+            $this->authorizationService->userPolicy($entityId, $id, $user);
 
             $request = $request->validated();
             $userEntity = $request->attributes->get('user_entity');
@@ -340,6 +355,13 @@ class UserController extends Controller
                     'email_verif_link_sent' => $emailHasChanged && !empty($emailVerifyLink->getId()) ? true : false
                 ]
             ], 200);
+        } catch (UnauthorizedException $e) {
+            return response()->json([
+                'status'  => 'FORBIDDEN',
+                'message' => $e->getMessage(),
+                'data'    => []
+            ], 403);
+
         } catch (\Throwable $th) {
             logger()->error("Error in UserController@authenticate: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
@@ -356,7 +378,10 @@ class UserController extends Controller
     public function delete(Request $request, string $id)
     {
         try {
-            $this->authorizationService->userPolicy($request->attributes->get('user_entity')->getId(), $request->attributes->get('user_model'));
+            $user = $request->attributes->get('user_model');
+            $entityId = $request->attributes->get('user_entity')->getId();
+
+            $this->authorizationService->userPolicy($entityId, $id, $user);
 
             $users = $this->deleteUserCommandHandler->handle($id);
 
@@ -367,6 +392,13 @@ class UserController extends Controller
                     'is_user_deleted' => $users
                 ]
             ], 200);
+        } catch (UnauthorizedException $e) {
+            return response()->json([
+                'status'  => 'FORBIDDEN',
+                'message' => $e->getMessage(),
+                'data'    => []
+            ], 403);
+
         } catch (\Throwable $th) {
             logger()->error("Error in UserController@delete: {$th->getMessage()}", [
                 'trace' => $th->getTraceAsString()
