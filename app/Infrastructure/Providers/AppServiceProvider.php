@@ -5,10 +5,12 @@ namespace App\Infrastructure\Providers;
 use App\Application\Contracts\AuthorizationInterface;
 use App\Application\Contracts\ConsumerAuthInterface;
 use App\Application\Contracts\ConsumerRepositoryInterface;
+use App\Application\Contracts\FileUseCaseInterface;
 use App\Application\Contracts\PermissionUseCaseInterface;
 use App\Application\Contracts\RoleUseCaseInterface;
 use App\Application\Services\AuthorizationService;
 use App\Application\Services\ConsumerAuthService;
+use App\Application\UseCases\FileUseCase;
 use App\Application\UseCases\PermissionUseCase;
 use App\Application\UseCases\RoleUseCase;
 
@@ -19,6 +21,7 @@ use App\Domain\Contracts\TokenGeneratorInterface;
 use App\Domain\Policies\UsersPolicy;
 use App\Domain\Repositories\CandidateRepositoryInterface;
 use App\Domain\Repositories\EmailVerificationRepositoryInterface;
+use App\Domain\Repositories\FileRepositoryInterface;
 use App\Domain\Repositories\JwtTokenRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\RoleRepositoryInterface;
@@ -28,6 +31,7 @@ use App\Infrastructure\Mail\EmailSender;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Infrastructure\Persistence\Eloquent\ConsumerRepository;
 use App\Infrastructure\Persistence\Eloquent\EmailVerificationRepository;
+use App\Infrastructure\Persistence\Eloquent\FileRepository;
 use App\Infrastructure\Persistence\Eloquent\JwtTokenRepository;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use App\Infrastructure\Persistence\Eloquent\PermissionRepository;
@@ -66,6 +70,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AuthorizationInterface::class, AuthorizationService::class);
         $this->app->bind(ConsumerAuthInterface::class, ConsumerAuthService::class);
 
+        $this->app->bind(FileUseCaseInterface::class, FileUseCase::class);
+        $this->app->bind(FileRepositoryInterface::class, FileRepository::class);
 
     }
 
