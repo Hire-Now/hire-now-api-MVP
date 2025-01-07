@@ -13,7 +13,7 @@ class GetMainResumeQueryHandler
     {
     }
 
-    public function handle(GetMainResumeQuery $command)
+    public function handle(GetMainResumeQuery $command): string
     {
         return $this->fileUseCase->getFileWithCustomizedConditions([
             'owner_id'              => $command->getUserId(),

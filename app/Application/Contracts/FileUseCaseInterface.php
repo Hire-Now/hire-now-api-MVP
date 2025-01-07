@@ -10,6 +10,5 @@ interface FileUseCaseInterface
     public function saveFilesRecordOnDB(User $user, array $storedFiles): array;
     public function setFileIntoQueueForScan(array $savedFiles): void;
     public function getFileWithCustomizedConditions(array $queryConditions);
-    // public function extractContectFromPDF(array $savedFiles): void;
-
+    public function extractTextFromFileAndEnhanceIt(string $fileContent): string;
 }

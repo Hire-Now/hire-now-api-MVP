@@ -12,6 +12,7 @@ use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Smalot\PdfParser\Parser;
 
 class FileUseCase implements FileUseCaseInterface
 {
@@ -116,17 +117,56 @@ class FileUseCase implements FileUseCaseInterface
         }
     }
 
-    public function getFileWithCustomizedConditions(array $queryConditions): File
+    public function getFileWithCustomizedConditions(array $queryConditions): string
     {
         try {
             $fileEntity = $this->fileRepository->getFileWithCustomizedConditions($queryConditions);
-
-            $parser = new \Smalot\PdfParser\Parser();
-            $pdf = $parser->parseFile(storage_path("app/{$fileEntity->getFilePath()}"));
-
-            dd($pdf->getText());
+            return file_get_contents(storage_path("app/uploads/{$fileEntity->getFilePath()}"));
         } catch (\Throwable $th) {
             throw new \Exception("File could not be found due to an error", 0, $th);
         }
+    }
+
+    public function extractTextFromFileAndEnhanceIt(string $fileContent): string
+    {
+        $parser = new Parser();
+        $parsedPDF = $parser->parseContent($fileContent);
+
+        $text = $parsedPDF->getText();
+
+        //adaptador de salida:
+        $data = $this->enrichDataWithAI($text);
+
+        return '';
+    }
+
+    protected function enrichDataWithAI(string $text): array
+    {
+        $response = $this->openAiClient->completions()->create([
+            'model'      => 'gpt-4',
+            'prompt'     => $this->buildAIExtractionPrompt($text),
+            'max_tokens' => 500,
+        ]);
+
+        return $response->choices[0]->text;
+    }
+
+    protected function buildAIExtractionPrompt(string $text): string
+    {
+        return <<<PROMPT
+Extract key information from the following CV text in {$language}:
+- Skills
+- Languages
+- Years of experience
+- Previous experiences (company, position, duration, description)
+- Education (degree, institution, years)
+- Professional summary
+- Certifications
+- Contact information (email, phone)
+
+CV text: "{$text}"
+
+Return a structured JSON with the fields listed.
+PROMPT;
     }
 }

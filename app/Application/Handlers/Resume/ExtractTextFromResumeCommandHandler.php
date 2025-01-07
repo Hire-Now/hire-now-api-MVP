@@ -2,7 +2,7 @@
 
 namespace App\Application\Handlers\Resume;
 
-use App\Application\Commands\Resume\ExtractTextFromResumeCommand;
+use App\Application\Commands\Resume\ExtractTextFromResumeAndEnhanceItCommand;
 use App\Application\Contracts\FileUseCaseInterface;
 
 class ExtractTextFromResumeCommandHandler
@@ -11,8 +11,8 @@ class ExtractTextFromResumeCommandHandler
     {
     }
 
-    public function handle(ExtractTextFromResumeCommand $command)
+    public function handle(ExtractTextFromResumeAndEnhanceItCommand $command)
     {
-        // return $this->fileUseCase->
+        return $this->fileUseCase->extractTextFromFileAndEnhanceIt($command->getResumeContent());
     }
 }
