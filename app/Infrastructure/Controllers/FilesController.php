@@ -5,6 +5,7 @@ namespace App\Infrastructure\Controllers;
 use App\Application\Commands\File\RecordFileOnDBCommand;
 use App\Application\Commands\File\SetFileForScanCommand;
 use App\Application\Commands\File\UploadNewFileCommand;
+use App\Application\Commands\Resume\ExtractTextFromResumeAndEnhanceItCommand;
 use App\Application\Commands\Resume\ExtractTextFromResumeCommand;
 use App\Application\Handlers\File\RecordFileOnDBCommandHandler;
 use App\Application\Handlers\File\SetFileForScanCommandHandler;
@@ -79,8 +80,8 @@ class FilesController
             $query = new GetMainResumeQuery($user->id, $user->roles[0]->name, true, true);
             $mainResume = $this->getMainResumeQueryHandler->handle($query);
 
-            // $command = new ExtractTextFromResumeCommand($user->id, $user->roles[0]->name);
-            // $textFromResume = $this->extractTextFromResumeCommandHandler->handler();
+            $command = new ExtractTextFromResumeAndEnhanceItCommand($mainResume);
+            $textFromResume = $this->extractTextFromResumeCommandHandler->handler();
         } catch (\Throwable $th) {
             //throw $th;
         }
