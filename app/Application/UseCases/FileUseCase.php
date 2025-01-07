@@ -131,7 +131,6 @@ class FileUseCase implements FileUseCaseInterface
     {
         $parser = new Parser();
         $parsedPDF = $parser->parseContent($fileContent);
-
         $text = $parsedPDF->getText();
 
         //adaptador de salida:

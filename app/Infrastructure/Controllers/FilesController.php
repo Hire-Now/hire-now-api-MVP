@@ -6,7 +6,6 @@ use App\Application\Commands\File\RecordFileOnDBCommand;
 use App\Application\Commands\File\SetFileForScanCommand;
 use App\Application\Commands\File\UploadNewFileCommand;
 use App\Application\Commands\Resume\ExtractTextFromResumeAndEnhanceItCommand;
-use App\Application\Commands\Resume\ExtractTextFromResumeCommand;
 use App\Application\Handlers\File\RecordFileOnDBCommandHandler;
 use App\Application\Handlers\File\SetFileForScanCommandHandler;
 use App\Application\Handlers\File\UploadNewFileCommandHandler;
@@ -81,7 +80,7 @@ class FilesController
             $mainResume = $this->getMainResumeQueryHandler->handle($query);
 
             $command = new ExtractTextFromResumeAndEnhanceItCommand($mainResume);
-            $textFromResume = $this->extractTextFromResumeCommandHandler->handler();
+            $textFromResume = $this->extractTextFromResumeCommandHandler->handle($command);
         } catch (\Throwable $th) {
             //throw $th;
         }
