@@ -79,12 +79,11 @@ class FilesController
             $query = new GetMainResumeQuery($user->id, $user->roles[0]->name, true, true);
             $mainResume = $this->getMainResumeQueryHandler->handle($query);
 
-            $command = new ExtractTextFromResumeAndEnhanceItCommand($mainResume);
+            $command = new ExtractTextFromResumeAndEnhanceItCommand($mainResume['file_content'], $mainResume['language_file']);
             $textFromResume = $this->extractTextFromResumeCommandHandler->handle($command);
         } catch (\Throwable $th) {
             //throw $th;
         }
-
     }
 
     public function delete()

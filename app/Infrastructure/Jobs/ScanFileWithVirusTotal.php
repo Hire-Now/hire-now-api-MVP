@@ -47,9 +47,9 @@ class ScanFileWithVirusTotal implements ShouldQueue
         $fileContent = file_get_contents($filePath);
 
         $uploadResponse = Http::withHeaders([
-            'x-Apikey' => config('app.vt.api_key')
+            'x-Apikey' => config('services.virus_total.api_key')
         ])->attach('file', $fileContent, 'filename')
-            ->post(config('app.vt.base_uri'));
+            ->post(config('services.virus_total.base_uri'));
 
         if ($uploadResponse->successful()) {
             $fileRecord->update([

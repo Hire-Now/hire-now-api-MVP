@@ -13,7 +13,9 @@ class ExtractTextFromResumeAndEnhanceItCommand
 
     public function __construct(
         #[Getter] #[Setter]
-        private string $resumeContent
+        private string $resumeContent,
+        #[Getter] #[Setter]
+        private string $languageFile
     ) {
     }
 }

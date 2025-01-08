@@ -5,9 +5,8 @@ namespace App\Application\UseCases;
 use App\Application\Contracts\FileUseCaseInterface;
 use App\Domain\Entities\File;
 use App\Domain\Repositories\FileRepositoryInterface;
+use App\Infrastructure\Adapter\OpenAIAdapter;
 use App\Infrastructure\Jobs\ScanFileWithVirusTotal;
-use App\Infrastructure\Persistence\Eloquent\Models\File as ModelsFile;
-use App\Infrastructure\Persistence\Eloquent\Models\Role;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Illuminate\Support\Collection;
 use Illuminate\Http\UploadedFile;
@@ -16,7 +15,7 @@ use Smalot\PdfParser\Parser;
 
 class FileUseCase implements FileUseCaseInterface
 {
-    public function __construct(private readonly FileRepositoryInterface $fileRepository)
+    public function __construct(private readonly FileRepositoryInterface $fileRepository, private readonly OpenAIAdapter $openAIAdapter)
     {
     }
 
@@ -117,55 +116,42 @@ class FileUseCase implements FileUseCaseInterface
         }
     }
 
-    public function getFileWithCustomizedConditions(array $queryConditions): string
+    public function getFileWithCustomizedConditions(array $queryConditions): array
     {
         try {
             $fileEntity = $this->fileRepository->getFileWithCustomizedConditions($queryConditions);
-            return file_get_contents(storage_path("app/uploads/{$fileEntity->getFilePath()}"));
+
+            return [
+                'file_content'  => file_get_contents(storage_path("app/uploads/{$fileEntity->getFilePath()}")),
+                'language_file' => $fileEntity->getLanguage()
+            ];
         } catch (\Throwable $th) {
             throw new \Exception("File could not be found due to an error", 0, $th);
         }
     }
 
-    public function extractTextFromFileAndEnhanceIt(string $fileContent): string
+    public function extractTextFromFileAndEnhanceIt(string $fileContent, string $languageFile): string
     {
-        $parser = new Parser();
-        $parsedPDF = $parser->parseContent($fileContent);
-        $text = $parsedPDF->getText();
+        try {
+            $parser = new Parser();
 
-        //adaptador de salida:
-        $data = $this->enrichDataWithAI($text);
+            $parsedPDF = $parser->parseContent($fileContent);
+            $text = $this->ensureUtf8Encoding($parsedPDF->getText());
 
-        return '';
+            $structuredCurriculum = $this->openAIAdapter->extractDataFromText($text, $languageFile);
+            dd($structuredCurriculum);
+            return '';
+        } catch (\Throwable $th) {
+            dd($th);
+        }
     }
 
-    protected function enrichDataWithAI(string $text): array
+    private function ensureUtf8Encoding(string $text): string
     {
-        $response = $this->openAiClient->completions()->create([
-            'model'      => 'gpt-4',
-            'prompt'     => $this->buildAIExtractionPrompt($text),
-            'max_tokens' => 500,
-        ]);
-
-        return $response->choices[0]->text;
-    }
-
-    protected function buildAIExtractionPrompt(string $text): string
-    {
-        return <<<PROMPT
-Extract key information from the following CV text in {$language}:
-- Skills
-- Languages
-- Years of experience
-- Previous experiences (company, position, duration, description)
-- Education (degree, institution, years)
-- Professional summary
-- Certifications
-- Contact information (email, phone)
-
-CV text: "{$text}"
-
-Return a structured JSON with the fields listed.
-PROMPT;
+        $encoding = mb_detect_encoding($text, [ 'UTF-8', 'ISO-8859-1', 'Windows-1252' ], true);
+        if ($encoding !== 'UTF-8') {
+            $text = mb_convert_encoding($text, 'UTF-8', $encoding);
+        }
+        return $text;
     }
 }

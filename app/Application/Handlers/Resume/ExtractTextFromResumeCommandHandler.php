@@ -13,6 +13,6 @@ class ExtractTextFromResumeCommandHandler
 
     public function handle(ExtractTextFromResumeAndEnhanceItCommand $command)
     {
-        return $this->fileUseCase->extractTextFromFileAndEnhanceIt($command->getResumeContent());
+        return $this->fileUseCase->extractTextFromFileAndEnhanceIt($command->getResumeContent(), $command->getLanguageFile());
     }
 }
