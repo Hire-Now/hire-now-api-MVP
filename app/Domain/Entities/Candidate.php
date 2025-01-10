@@ -16,45 +16,52 @@ class Candidate
         private ?string $userId,
         /** @var Skill[] */
         #[Getter] #[Setter]
-        private array $skills,
+        private ?array $skills,
         /** @var Language[]*/
         #[Getter] #[Setter]
-        private array $languages,
+        private ?array $languages,
         #[Getter] #[Setter]
-        private int $yearsOfExperience,
-        /** @var PreviousExperiences[]*/
+        private ?int $yearsOfExperience,
+        /** @var PreviousExperience[]*/
         #[Getter] #[Setter]
-        private array $previousExperiences,
+        private ?array $previousExperiences,
         #[Getter] #[Setter]
         /** @var Education[]*/
-        private array $education,
+        private ?array $education,
         #[Getter] #[Setter]
         private ?string $professionalSummary,
+        /** @var Certification[]*/
         #[Getter] #[Setter]
         private ?array $certifications,
+        /** @var ContactInfo[]*/
         #[Getter] #[Setter]
         private ?array $contactInfo,
+        /** @var PortfolioLinks[]*/
         #[Getter] #[Setter]
         private ?array $portfolioLinks,
+        /** @var Preferences[]*/
+        #[Getter] #[Setter]
+        private ?array $preferences,
+        /** @var Curriculum[]*/
+        #[Getter] #[Setter]
+        private ?string $uploadedCV,
+        #[Getter] #[Setter]
+        private ?array $uploadedPitch,
+        /** @var LanguagesGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $languagesGrades,
+        /** @var TechnicalGrades[]*/
+        #[Getter] #[Setter]
+        private ?array $technicalGrades,
+        /** @var CompletedAssesments[]*/
+        #[Getter] #[Setter]
+        private ?array $completedAssesments,
+        /** @var ActiveProcesses[]*/
+        #[Getter] #[Setter]
+        private ?array $activeProcesses,
+        #[Getter] #[Setter]
+        private ?string $generatedPlatformCV,
+
     ) {
     }
-
-    //     #[Getter] #[Setter]
-    // private ?string $uploadedCV,
-    // #[Getter] #[Setter]
-    // private ?array $uploadedPitch,
-    //     /** @var LanguagesGrades[]*/
-    // #[Getter] #[Setter]
-    // private ?array $languagesGrades,
-    // /** @var TechnicalGrades[]*/
-    // #[Getter] #[Setter]
-    // private ?array $technicalGrades,
-    // /** @var CompletedAssesments[]*/
-    // #[Getter] #[Setter]
-    // private ?array $completedAssesments,
-    // /** @var ActiveProcesses[]*/
-    // #[Getter] #[Setter]
-    // private ?array $activeProcesses,
-    // #[Getter] #[Setter]
-    // private ?string $generatedPlatformCV,
 }

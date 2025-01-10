@@ -62,7 +62,7 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         Route::delete('', [ CandidateController::class, 'delete' ]);
     });
 
-    Route::prefix('files')->group(function () {
+    Route::prefix(prefix: 'files')->group(function () {
         Route::get('', [ FilesController::class, 'index' ]);
         Route::get('/{id}', [ FilesController::class, 'show' ]);
         Route::post('', [ FilesController::class, 'upload' ]);

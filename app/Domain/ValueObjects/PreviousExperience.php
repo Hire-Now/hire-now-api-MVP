@@ -7,7 +7,7 @@ use App\Domain\Attributes\Getter;
 use App\Domain\Attributes\Setter;
 use Carbon\Carbon;
 
-class PreviousExperiences
+class PreviousExperience
 {
     use AccessorTrait;
 

@@ -15,16 +15,7 @@ class Skill
         private string $skill,
         #[Setter] #[Getter]
         private string $level
-    ) {}
-
-    public function getSkill(): string
-    {
-        return $this->skill;
-    }
-
-    public function getLevel(): string
-    {
-        return $this->level;
+    ) {
     }
 
     public function equals(Skill $otherSkill): bool
