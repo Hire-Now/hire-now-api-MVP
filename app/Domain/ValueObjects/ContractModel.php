@@ -19,4 +19,13 @@ class ContractModel
         private Benefits $benefits
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'type'     => $this->type->toArray(),
+            'payment'  => $this->payment->toArray(),
+            'benefits' => $this->benefits->toArray(),
+        ];
+    }
 }

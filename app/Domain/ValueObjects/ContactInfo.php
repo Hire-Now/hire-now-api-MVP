@@ -25,4 +25,16 @@ class ContactInfo
         private SocialMedia $socialMedia
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'phone_number'      => $this->phoneNumber,
+            'whatsapp_number'   => $this->whatsappNumber,
+            'email'             => $this->email,
+            'residence_country' => $this->residenceCountry,
+            'residence_address' => $this->residenceAddress,
+            'social_media'      => $this->socialMedia->toArray(),
+        ];
+    }
 }

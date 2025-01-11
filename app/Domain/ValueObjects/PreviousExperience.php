@@ -29,4 +29,17 @@ class PreviousExperience
         private array $milestones,
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'company_name' => $this->companyName,
+            'role'         => $this->role,
+            'start_date'   => $this->startDate,
+            'end_date'     => $this->endDate,
+            'description'  => $this->description,
+            'technologies' => $this->technologies,
+            'milestones'   => array_map(fn(Milestone $milestone) => $milestone->toArray(), $this->milestone ?? []),
+        ];
+    }
 }

@@ -11,8 +11,7 @@ class CandidateServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->bind(CandidateRepositoryInterface::class, CandidateRepository::class);
-        $this->app->singleton(CandidateService::class, CandidateService::class);
+
     }
 
     public function boot()

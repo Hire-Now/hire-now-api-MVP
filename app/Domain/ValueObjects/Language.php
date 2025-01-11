@@ -15,5 +15,14 @@ class Language
         private string $language,
         #[Setter] #[Getter]
         private string $proficiency
-    ) {}
+    ) {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->language,
+            'level' => $this->proficiency,
+        ];
+    }
 }

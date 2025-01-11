@@ -3,6 +3,8 @@
 namespace App\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateCandidateRequest extends FormRequest
 {
@@ -39,21 +41,24 @@ class CreateCandidateRequest extends FormRequest
             'previous_experiences.*.milestones.*.role'                   => 'required|string|max:255',
             'previous_experiences.*.milestones.*.outcome'                => 'required|string|max:1000',
             'skills'                                                     => 'required|array|min:1',
-            'skills.*'                                                   => 'required|string|max:100',
+            'skills.*.name'                                              => 'required|string|max:100',
+            'skills.*.level'                                             => 'required|numeric|min:0|max:10',
             'education'                                                  => 'required|array|min:1',
             'education.*.degree'                                         => 'required|string|max:255',
             'education.*.institution'                                    => 'required|string|max:255',
-            'education.*.fieldOfStudy'                                   => 'nullable|string|max:255',
-            'education.*.startDate'                                      => 'nullable|date_format:d-m-Y',
-            'education.*.endDate'                                        => 'nullable|date_format:d-m-Y|after_or_equal:education.*.startDate',
+            'education.*.field_of_study'                                 => 'nullable|string|max:255',
+            'education.*.start_date'                                     => 'nullable|date_format:d-m-Y',
+            'education.*.end_date'                                       => 'nullable|date_format:d-m-Y|after_or_equal:education.*.startDate',
             'education.*.grade'                                          => 'nullable|string|max:100',
             'languages'                                                  => 'required|array|min:1',
-            'languages.*'                                                => 'required|string|max:100',
+            'languages.*.name'                                           => 'required|string|max:100',
+            'languages.*.level'                                          => 'required|numeric|min:0|max:10',
             'certifications'                                             => 'nullable|array',
             'certifications.*.name'                                      => 'nullable|string|max:255',
             'certifications.*.issue_date'                                => 'nullable|date_format:d-m-Y',
             'certifications.*.issuer_entity'                             => 'nullable|string|max:255',
             'certifications.*.expiry_date'                               => 'nullable|date_format:d-m-Y|after_or_equal:certifications.*.issue_date',
+            'certifications.*.link'                                      => 'nullable|string|max:255',
             'contact_info.phone_number'                                  => 'nullable|string|max:20',
             'contact_info.whatsapp_number'                               => 'nullable|string|max:20',
             'contact_info.email'                                         => 'nullable|email|max:255',
@@ -93,22 +98,23 @@ class CreateCandidateRequest extends FormRequest
     }
 
     /**
-     * Get custom messages for validation errors.
+     * Handle a failed validation attempt.
      *
-     * @return array
+     * @param  \Illuminate\Contracts\Validation\Validator  $validator
+     * @return void
+     *
+     * @throws \Illuminate\Http\Exceptions\HttpResponseException
      */
-    public function messages(): array
+    protected function failedValidation(Validator $validator)
     {
-        return [
-            'userId.required'                 => 'El ID de usuario es obligatorio.',
-            'skills.required'                 => 'Las habilidades son obligatorias.',
-            'languages.required'              => 'Los lenguajes son obligatorios.',
-            'yearsOfExperience.required'      => 'Los años de experiencia son obligatorios.',
-            'previousExperiences.required'    => 'Las experiencias previas son obligatorias.',
-            'education.required'              => 'La educación es obligatoria.',
-            'uploadedCV.file'                 => 'El CV debe ser un archivo.',
-            'uploadedPitch.array'             => 'El pitch debe ser un arreglo de archivos.',
-            'languagesGrades.*.grade.between' => 'La calificación debe estar entre 1 y 10.',
+        $errors = $validator->errors();
+
+        $response = [
+            'status'  => 'ERROR',
+            'message' => 'Validation failed.',
+            'errors'  => $errors->toArray(),
         ];
+
+        throw new HttpResponseException(response()->json($response, 422));
     }
 }

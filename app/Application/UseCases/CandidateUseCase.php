@@ -10,53 +10,37 @@ use App\Domain\Services\CandidateService;
 
 class CandidateUseCase
 {
-    public function __construct(
-        private CandidateRepositoryInterface $repository,
-        private CandidateService $service
-    ) {}
+    // public function __construct(
+    //     private CandidateRepositoryInterface $repository,
+    //     private CandidateService $service
+    // ) {}
 
-    public function execute(CandidateDTO $dto): Candidate
+    public function createCandidate(Candidate $candidate): array
     {
-        // Validaciones
-        // if (!$this->service->validateEmail($dto->email)) {
-        //     throw new \Exception("Invalid email");
-        // }
-
-        // if (!$this->service->validateSkills($dto->skills)) {
-        //     throw new \Exception("Invalid skills");
-        // }
-
-        // Crear candidato y guardarlo
-        $candidate = new Candidate(
-            id: null,
-            name: $dto->name,
-            email: $dto->email,
-            skills: $dto->skills
-        );
-
-        return $this->repository->save($candidate);
+        //todo: validar que fecha de fin de estudio y trrbajo sea superior a la de inicio, descartar campos vacios o nullos de la entidad
+        return $candidate->toArray();
     }
 
-    public function update(UpdateCandidateCommand $command): Candidate
-    {
-        if (!$this->service->validateEmail($command->getEmail())) {
-            throw new \Exception("Invalid email");
-        }
+    // public function update(UpdateCandidateCommand $command): Candidate
+    // {
+    //     if (!$this->service->validateEmail($command->getEmail())) {
+    //         throw new \Exception("Invalid email");
+    //     }
 
-        if (!$this->service->validateSkills($command->getSkills())) {
-            throw new \Exception("Invalid skills");
-        }
+    //     if (!$this->service->validateSkills($command->getSkills())) {
+    //         throw new \Exception("Invalid skills");
+    //     }
 
-        $candidate = $this->repository->find($command->getId());
+    //     $candidate = $this->repository->find($command->getId());
 
-        if (!$candidate) {
-            throw new \Exception("Candidate not found");
-        }
+    //     if (!$candidate) {
+    //         throw new \Exception("Candidate not found");
+    //     }
 
-        $candidate->setName($command->getName());
-        $candidate->setEmail($command->getEmail());
-        $candidate->setSkills($command->getSkills());
+    //     $candidate->setName($command->getName());
+    //     $candidate->setEmail($command->getEmail());
+    //     $candidate->setSkills($command->getSkills());
 
-        return $this->repository->save($candidate);
-    }
+    //     return $this->repository->save($candidate);
+    // }
 }

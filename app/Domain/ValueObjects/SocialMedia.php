@@ -21,4 +21,14 @@ class SocialMedia
         private ?string $linkedin
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'facebook'  => $this->facebook,
+            'instagram' => $this->instagram,
+            'twitter'   => $this->twitter,
+            'linkedin'  => $this->linkedin,
+        ];
+    }
 }

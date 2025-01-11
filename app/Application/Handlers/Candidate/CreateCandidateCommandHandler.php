@@ -12,10 +12,19 @@ class CreateCandidateCommandHandler
     {
     }
 
-    public function handle(CreateCandidateCommand $command)
+    public function handle(CreateCandidateCommand $command): array
     {
-        return $this->useCase->execute(new Candidate(
-            $command
-        ));
+        $candidate = new Candidate(null, $command->getUserId());
+        $candidate->setSkills($command->getSkills());
+        $candidate->setLanguages($command->getSkills());
+        $candidate->setPreviousExperiences($command->getPreviousExperiences());
+        $candidate->setEducation($command->getEducation());
+        $candidate->setProfessionalSummary($command->getProfessionalSummary());
+        $candidate->setCertifications($command->getCertifications());
+        $candidate->setContactInfo($command->getContactInfo());
+        $candidate->setPortfolioLinks($command->getPortfolioLinks());
+        $candidate->setPreferences($command->getPreferences());
+
+        return $this->useCase->createCandidate($candidate);
     }
 }

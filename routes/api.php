@@ -1,19 +1,18 @@
 <?php
 
-use App\Infrastructure\Controllers\FilesController;
+use App\Infrastructure\Adapter\Inbound\FilesController;
 use App\Infrastructure\Middlewares\CheckPermissionMiddleware;
 use App\Infrastructure\Middlewares\CheckRoleMiddleware;
 use App\Infrastructure\Middlewares\ConsumerAuthMiddleware;
 use App\Infrastructure\Middlewares\JwtAuthMiddleware;
-use App\Infrastructure\Controllers\RoleController;
-use App\Infrastructure\Controllers\UserController;
-use App\Infrastructure\Controllers\CandidateController;
-use App\Infrastructure\Controllers\ConsumerController;
-use App\Infrastructure\Controllers\PermissionsController;
+use App\Infrastructure\Adapter\Inbound\RoleController;
+use App\Infrastructure\Adapter\Inbound\UserController;
+use App\Infrastructure\Adapter\Inbound\CandidateController;
+use App\Infrastructure\Adapter\Inbound\ConsumerController;
+use App\Infrastructure\Adapter\Inbound\PermissionsController;
 
 use Illuminate\Support\Facades\Route;
 
-//todo: Candidate!!!!
 //todo: Falta crud permission y roles
 
 Route::post('consumer/authenticate', [ ConsumerController::class, 'authenticate' ])
@@ -41,25 +40,23 @@ Route::prefix('v1')->middleware([ 'throttle:6,1', ConsumerAuthMiddleware::class,
         //todo: Crear ruta que liste las instituciones existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
         //todo: Crear ruta que liste los degrees existentes en la plataforma con nombre e imagen y asi poder permitir el autocompletado
 
-        Route::get('professional/profile/suggest', [ FilesController::class, 'improveAndSuggestCVInfoWithAI' ]);
-        Route::get('', [ CandidateController::class, 'index' ])
-            ->middleware([
-                CheckPermissionMiddleware::class . ':index_candidates',
-                CheckRoleMiddleware::class . ':recruiter',
-                CheckRoleMiddleware::class . ':executive',
-            ])
-            ->withoutMiddleware([ CheckRoleMiddleware::class . ':candidate' ]);
+        Route::get('', [ CandidateController::class, 'index' ])->middleware([
+            CheckPermissionMiddleware::class . ':index_candidates',
+            CheckRoleMiddleware::class . ':recruiter',
+            CheckRoleMiddleware::class . ':executive',
+        ])->withoutMiddleware([ CheckRoleMiddleware::class . ':candidate' ]);
 
-        Route::get('/{id}', [ CandidateController::class, 'show' ])
-            ->middleware([
-                CheckPermissionMiddleware::class . ':index_candidates',
-                CheckRoleMiddleware::class . ':recruiter',
-                CheckRoleMiddleware::class . ':executive',
-            ]);
+        Route::get('/{id}', [ CandidateController::class, 'show' ])->middleware([
+            CheckPermissionMiddleware::class . ':index_candidates',
+            CheckRoleMiddleware::class . ':recruiter',
+            CheckRoleMiddleware::class . ':executive',
+        ]);
 
         Route::post('', [ CandidateController::class, 'store' ]);
         Route::put('', [ CandidateController::class, 'update' ]);
         Route::delete('', [ CandidateController::class, 'delete' ]);
+
+        Route::get('professional/profile/suggest', [ FilesController::class, 'improveAndSuggestCVInfoWithAI' ]);
     });
 
     Route::prefix(prefix: 'files')->group(function () {

@@ -19,4 +19,13 @@ class WorkModel
         private bool $onSite
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'remote'  => $this->remote,
+            'hybrid'  => $this->hybrid,
+            'on-site' => $this->onSite,
+        ];
+    }
 }

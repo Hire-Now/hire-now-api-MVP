@@ -26,7 +26,7 @@ use App\Domain\Repositories\JwtTokenRepositoryInterface;
 use App\Domain\Repositories\PermissionRepositoryInterface;
 use App\Domain\Repositories\RoleRepositoryInterface;
 use App\Domain\Repositories\UserRepositoryInterface;
-
+use App\Domain\Services\CandidateService;
 use App\Infrastructure\Mail\EmailSender;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Infrastructure\Persistence\Eloquent\ConsumerRepository;
@@ -72,6 +72,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(FileUseCaseInterface::class, FileUseCase::class);
         $this->app->bind(FileRepositoryInterface::class, FileRepository::class);
+
+        $this->app->bind(CandidateRepositoryInterface::class, CandidateRepository::class);
+        $this->app->singleton(CandidateService::class, CandidateService::class);
 
     }
 

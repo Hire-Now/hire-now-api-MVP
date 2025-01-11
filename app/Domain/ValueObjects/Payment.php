@@ -21,4 +21,14 @@ class Payment
         private bool $projectFixed
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'currency'      => $this->currency,
+            'hourly_rate'   => $this->hourlyRate,
+            'monthly_fixed' => $this->monthlyFixed,
+            'project_fixed' => $this->projectFixed,
+        ];
+    }
 }

@@ -17,4 +17,12 @@ class Preferences
         private ContractModel $contractModel
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'work_model'     => $this->workModel->toArray(),
+            'contract_model' => $this->workModel->toArray(),
+        ];
+    }
 }

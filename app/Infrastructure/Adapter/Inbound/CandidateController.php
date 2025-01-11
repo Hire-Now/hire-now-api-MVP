@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Infrastructure\Adapter\Inbound;
 
 use App\Application\Commands\Candidate\CreateCandidateCommand;
 use App\Application\Commands\Candidate\UpdateCandidateCommand;
 use App\Application\UseCases\CandidateUseCase;
-use App\Application\DTOs\Candidate\CandidateDTO;
 use App\Application\Handlers\Candidate\CreateCandidateCommandHandler;
 use App\Application\Handlers\Candidate\UpdateCandidateCommandHandler;
 use App\Domain\Services\CandidateService;
@@ -24,9 +23,22 @@ class CandidateController
     public function store(CreateCandidateRequest $request)
     {
         try {
+            // $userModel = $request->attributes->get('user_model');
+            $userEntity = $request->attributes->get('user_entity');
             $request = $request->validated();
 
-            $command = new CreateCandidateCommand();
+            $command = new CreateCandidateCommand(
+                $userEntity->getId(),
+                $request['skills'],
+                $request['languages'],
+                $request['previous_experiences'],
+                $request['education'],
+                $request['professional_summary'],
+                $request['certifications'],
+                $request['contact_info'],
+                $request['portfolio_links'],
+                $request['preferences']
+            );
 
             $candidate = $this->createCandidateCommandHandler->handle($command);
 
@@ -40,6 +52,7 @@ class CandidateController
                 'candidate' => []
             ], status: 400);
         } catch (\Throwable $th) {
+            dd($th);
             return response()->json([
                 'message'   => 'An unexpected error just happened!',
                 'candidate' => []

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Infrastructure\Adapter\Inbound;
 
 use App\Application\Commands\File\RecordFileOnDBCommand;
 use App\Application\Commands\File\SetFileForScanCommand;

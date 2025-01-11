@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Infrastructure\Adapter\Inbound;
 
 use App\Application\Commands\Consumer\AuthenticateConsumerCommand;
 use App\Application\Handlers\Consumer\AuthenticateConsumerCommandHandler;

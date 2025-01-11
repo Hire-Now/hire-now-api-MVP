@@ -2,7 +2,7 @@
 
 namespace Tests\Unit\User;
 
-use App\Infrastructure\Controllers\UserController;
+use App\Infrastructure\Adapter\Inbound\UserController;
 use App\Application\UseCases\UserUseCase;
 use Illuminate\Http\Request;
 use Tests\TestCase;
@@ -19,7 +19,7 @@ class UserControllerTest extends TestCase
 
         $controller = new UserController($useCaseMock);
 
-        $request = Request::create('/store', 'POST', ['name' => 'Test']);
+        $request = Request::create('/store', 'POST', [ 'name' => 'Test' ]);
         $response = $controller->store($request);
 
         $this->assertEquals(200, $response->getStatusCode());

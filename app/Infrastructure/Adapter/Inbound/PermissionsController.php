@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Controllers;
+namespace App\Infrastructure\Adapter\Inbound;
 
 use App\Application\Commands\Permission\CreatePermissionCommand;
 use App\Application\Commands\Permission\ListPermissionsCommand;

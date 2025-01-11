@@ -22,4 +22,12 @@ class Skill
     {
         return $this->skill === $otherSkill->getSkill() && $this->level === $otherSkill->getLevel();
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name'  => $this->skill,
+            'level' => $this->level,
+        ];
+    }
 }

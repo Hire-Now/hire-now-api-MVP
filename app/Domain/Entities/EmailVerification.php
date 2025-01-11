@@ -35,7 +35,7 @@ class EmailVerification
             'id'              => $this->id,
             'userId'          => $this->userId,
             'email'           => $this->email,
-            'hash'            => $this->hash,
+            'hash'            => $this->urlHash,
             'verifyLink'      => $this->verifyLink,
             'emailVerifiedAt' => $this->emailVerifiedAt?->toDateTimeString(),
         ];

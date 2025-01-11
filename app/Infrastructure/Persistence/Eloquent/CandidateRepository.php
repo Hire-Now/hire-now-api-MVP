@@ -7,7 +7,7 @@ use App\Domain\Entities\Candidate;
 use App\Infrastructure\Persistence\Eloquent\Models\Candidate as CandidateModel;
 use Exception;
 
-class CandidateRepository implements CandidateRepositoryInterface
+class CandidateRepository //implements CandidateRepositoryInterface
 {
     public function save(Candidate $candidate): Candidate
     {

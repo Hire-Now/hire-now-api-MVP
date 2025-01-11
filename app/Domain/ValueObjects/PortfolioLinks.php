@@ -27,4 +27,17 @@ class PortfolioLinks
         private array $customizedProjects
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'github'              => $this->github,
+            'hackerrank'          => $this->hackerrank,
+            'dribbble'            => $this->dribbble,
+            'gitlab'              => $this->gitlab,
+            'behance'             => $this->behance,
+            'leetcode'            => $this->leetcode,
+            'customized_projects' => $this->customizedProjects,
+        ];
+    }
 }

@@ -3,7 +3,7 @@ namespace Tests\Unit\Candidate;
 
 use App\Application\UseCases\CandidateUseCase;
 use App\Domain\Repositories\CandidateRepositoryInterface;
-use App\Infrastructure\Controllers\CandidateController;
+use App\Infrastructure\Adapter\Inbound\CandidateController;
 use App\Infrastructure\Services\CandidateService;
 use Illuminate\Http\Request;
 use Mockery;

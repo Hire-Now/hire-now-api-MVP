@@ -21,4 +21,14 @@ class ContractType
         private bool $fixedTerm
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'full_time'  => $this->fullTime,
+            'part_time'  => $this->partTime,
+            'hourly'     => $this->hourly,
+            'fixed_term' => $this->fixedTerm,
+        ];
+    }
 }

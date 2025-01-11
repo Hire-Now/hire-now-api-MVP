@@ -18,7 +18,20 @@ class Certification
         #[Getter] #[Setter]
         private ?string $issuerEntity,
         #[Getter] #[Setter]
-        private ?string $expiryDate
+        private ?string $expiryDate,
+        #[Getter] #[Setter]
+        private ?string $link
     ) {
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'name'          => $this->name,
+            'issue_date'    => $this->issueDate,
+            'issuer_entity' => $this->issuerEntity,
+            'expiry_date'   => $this->expiryDate,
+            'link'          => $this->link,
+        ];
     }
 }

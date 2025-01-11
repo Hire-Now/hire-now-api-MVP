@@ -19,4 +19,13 @@ class Benefits
         private bool $retirementPlan
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'health_insurance' => $this->healthInsurance,
+            'paid_time_off'    => $this->paidTimeOff,
+            'retirement_plan'  => $this->retirementPlan,
+        ];
+    }
 }

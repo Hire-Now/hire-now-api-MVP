@@ -23,4 +23,15 @@ class Milestone
         private string $outcome,
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name'         => $this->name,
+            'description'  => $this->description,
+            'technologies' => $this->technologies,
+            'role'         => $this->role,
+            'outcome'      => $this->outcome,
+        ];
+    }
 }

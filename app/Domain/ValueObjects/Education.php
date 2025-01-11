@@ -26,4 +26,16 @@ class Education
         private ?string $grade
     ) {
     }
+
+    public function toArray(): array
+    {
+        return [
+            'degree'         => $this->degree,
+            'institution'    => $this->institution,
+            'field_of_study' => $this->fieldOfStudy,
+            'start_date'     => $this->startDate,
+            'end_date'       => $this->endDate,
+            'grade'          => $this->grade,
+        ];
+    }
 }
