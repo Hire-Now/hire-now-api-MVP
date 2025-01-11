@@ -44,7 +44,7 @@ class CandidateController
 
             return response()->json([
                 'message'   => 'Candidate created successfully!',
-                'candidate' => $candidate
+                'candidate' => $candidate->toArray()
             ]);
         } catch (BadRequestException $th) {
             return response()->json([

@@ -40,7 +40,7 @@ class Candidate
         #[Getter]
         private ?array $languages = null,
         #[Getter] #[Setter]
-        private ?int $yearsOfExperience = null,
+        private ?string $yearsOfExperience = null,
         /** @var PreviousExperience[]*/
         #[Getter]
         private ?array $previousExperiences = null,

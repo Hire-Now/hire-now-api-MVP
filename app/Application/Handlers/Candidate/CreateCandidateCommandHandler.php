@@ -12,7 +12,7 @@ class CreateCandidateCommandHandler
     {
     }
 
-    public function handle(CreateCandidateCommand $command): array
+    public function handle(CreateCandidateCommand $command): Candidate
     {
         $candidate = new Candidate(null, $command->getUserId());
         $candidate->setSkills($command->getSkills());
