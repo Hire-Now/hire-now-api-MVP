@@ -15,9 +15,13 @@ class Candidate extends Model
     protected $fillable = [
         'user_id',
         'years_of_experience',
-        'uploaded_cv',
-        'uploaded_pitch',
+        'phone_number_1',
+        'phone_number_2',
+        'whatsapp_number',
+        'email_1',
+        'email_2',
         'generated_platform_cv',
+        'social_media'
     ];
 
     public $timestamps = true;
@@ -27,17 +31,17 @@ class Candidate extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function skills()
-    {
-        return $this->hasMany(Skill::class);
-    }
-
-    public function languages()
+    public function language()
     {
         return $this->hasMany(Language::class);
     }
 
-    public function previousExperiences()
+    public function skill()
+    {
+        return $this->hasMany(Skill::class);
+    }
+
+    public function previousExperience()
     {
         return $this->hasMany(PreviousExperience::class);
     }
@@ -47,28 +51,58 @@ class Candidate extends Model
         return $this->hasMany(Education::class);
     }
 
-    public function languagesGrades()
+    public function certificate()
     {
-        return $this->hasMany(LanguagesGrade::class);
+        return $this->hasMany(Certificate::class);
     }
 
-    public function technicalGrades()
+    public function preferences()
     {
-        return $this->hasMany(TechnicalGrade::class);
+        return $this->hasOne(Preference::class);
     }
 
-    public function completedAssessments()
+    public function paymentPreferences()
     {
-        return $this->hasMany(CompletedAssessment::class);
+        return $this->hasOne(PaymentPreference::class);
     }
 
-    public function activeProcesses()
+    public function benefitsPreferences()
     {
-        return $this->hasMany(ActiveProcess::class);
+        return $this->hasOne(BenefitsPreference::class);
     }
 
     public function files()
     {
         return $this->morphMany(File::class, 'owner');
     }
+
+    public function updateFilesToCandidate(User $user)
+    {
+        $user->files->each(function ($file) {
+            $file->owner_id = $this->id;
+            $file->owner_type = Candidate::class;
+            $file->save();
+        });
+    }
+
+    // public function languagesGrades()
+    // {
+    //     return $this->hasMany(LanguagesGrade::class);
+    // }
+
+    // public function technicalGrades()
+    // {
+    //     return $this->hasMany(TechnicalGrade::class);
+    // }
+
+    // public function completedAssessments()
+    // {
+    //     return $this->hasMany(CompletedAssessment::class);
+    // }
+
+    // public function activeProcesses()
+    // {
+    //     return $this->hasMany(ActiveProcess::class);
+    // }
+
 }

@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use App\Domain\Repositories\CandidateRepositoryInterface;
+use App\Domain\Repositories\ICandidateRepository;
 use App\Infrastructure\Persistence\Eloquent\CandidateRepository;
 use App\Domain\Services\CandidateService;
 

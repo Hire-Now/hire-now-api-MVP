@@ -10,14 +10,16 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('skills', function (Blueprint $table) {
+        Schema::create('certificates', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('candidate_id')->index();
-            $table->string('skill');
-            $table->string('proficiency');
+            $table->string('name');
+            $table->date('issue_date');
+            $table->date('expiry_date')->nullable();
+            $table->string('issuer_entity');
+            $table->string('link');
             $table->timestamps();
             $table->softDeletes();
-            $table->foreign('candidate_id')->references('id')->on('candidates')->onDelete('cascade');
         });
     }
 
@@ -26,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('skills');
+        Schema::dropIfExists('certificates');
     }
 };

@@ -4,7 +4,7 @@ namespace Tests\Unit\Candidate;
 
 use App\Application\Commands\Candidate\UpdateCandidateCommand;
 use App\Application\UseCases\CandidateUseCase;
-use App\Domain\Repositories\CandidateRepositoryInterface;
+use App\Domain\Repositories\ICandidateRepository;
 use App\Domain\Services\CandidateService;
 use App\Application\DTOs\Candidate\CandidateDTO;
 use App\Domain\Entities\Candidate;
@@ -14,7 +14,7 @@ class CandidateUseCaseTest extends TestCase
 {
     public function testExecute()
     {
-        $repository = $this->createMock(CandidateRepositoryInterface::class);
+        $repository = $this->createMock(ICandidateRepository::class);
         $service = $this->createMock(CandidateService::class);
         $useCase = new CandidateUseCase($repository, $service);
 
@@ -34,8 +34,8 @@ class CandidateUseCaseTest extends TestCase
         $candidate = new Candidate(id: 1, name: 'John Doe', email: 'johndoe@example.com', skills: 'PHP');
         $updatedCandidate = new Candidate(id: 1, name: 'Jane Doe', email: 'janedoe@example.com', skills: 'Laravel');
 
-        /** @var CandidateRepositoryInterface|\Mockery\MockInterface $repository */
-        $repository = \Mockery::mock(CandidateRepositoryInterface::class);
+        /** @var ICandidateRepository|\Mockery\MockInterface $repository */
+        $repository = \Mockery::mock(ICandidateRepository::class);
         $repository->shouldReceive('find')->with(1)->andReturn($candidate);
         $repository->shouldReceive('save')->with(\Mockery::on(function ($arg) use ($updatedCandidate) {
             return $arg->getName() === $updatedCandidate->getName();

@@ -63,19 +63,19 @@ class CandidateController
     public function update(Request $request, $id)
     {
         try {
-            $command = new UpdateCandidateCommand(
-                $id,
-                $request->name,
-                $request->email,
-                $request->skills
-            );
+            // $command = new UpdateCandidateCommand(
+            //     $id,
+            //     $request->name,
+            //     $request->email,
+            //     $request->skills
+            // );
 
-            $handler = new UpdateCandidateCommandHandler(new CandidateUseCase(
-                new CandidateRepository(),
-                new CandidateService()
-            ));
+            // $handler = new UpdateCandidateCommandHandler(new CandidateUseCase(
+            //     new CandidateRepository(),
+            //     new CandidateService()
+            // ));
 
-            $candidate = $handler->handle($command);
+            // $candidate = $handler->handle($command);
 
             return response()->json([
                 'message'   => 'Candidate updated successfully!',

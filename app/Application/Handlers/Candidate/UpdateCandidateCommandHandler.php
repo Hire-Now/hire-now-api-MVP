@@ -4,7 +4,7 @@ namespace App\Application\Handlers\Candidate;
 
 use App\Application\Commands\Candidate\UpdateCandidateCommand;
 use App\Application\UseCases\CandidateUseCase;
-use App\Domain\Repositories\CandidateRepositoryInterface;
+// use App\Domain\Repositories\CandidateRepositoryInterface;
 
 class UpdateCandidateCommandHandler
 {

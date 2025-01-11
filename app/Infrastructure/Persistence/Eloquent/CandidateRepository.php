@@ -2,31 +2,22 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Repositories\CandidateRepositoryInterface;
+use App\Domain\Repositories\ICandidateRepository;
 use App\Domain\Entities\Candidate;
 use App\Infrastructure\Persistence\Eloquent\Models\Candidate as CandidateModel;
+use App\Infrastructure\Utils\ArrayHelper;
 use Exception;
 
-class CandidateRepository //implements CandidateRepositoryInterface
+class CandidateRepository implements ICandidateRepository
 {
-    public function save(Candidate $candidate): Candidate
+    public function create(Candidate $candidate): Candidate
     {
         try {
-            if ($candidate->getId()) {
-                $candidateModel = CandidateModel::find($candidate->getId());
-                $candidateModel->name = $candidate->getName();
-                $candidateModel->email = $candidate->getEmail();
-                $candidateModel->skills = $candidate->getSkills();
-                $candidateModel->save();
+            $candidateArray = ArrayHelper::removeEmptyOrNullElements($candidate->toArray());
 
-                return $candidate;
-            }
-
-            $candidateModel = CandidateModel::create([
-                'name'   => $candidate->getName(),
-                'email'  => $candidate->getEmail(),
-                'skills' => $candidate->getSkills()
-            ]);
+            $candidateModel = CandidateModel::create(
+                $candidateArray
+            );
 
             return $candidate;
         } catch (\Throwable $th) {
@@ -34,19 +25,19 @@ class CandidateRepository //implements CandidateRepositoryInterface
         }
     }
 
-    public function find(string $id): ?Candidate
-    {
-        $candidateModel = CandidateModel::find($id);
+    // public function find(string $id): ?Candidate
+    // {
+    //     $candidateModel = CandidateModel::find($id);
 
-        if (!$candidateModel) {
-            return null;
-        }
+    //     if (!$candidateModel) {
+    //         return null;
+    //     }
 
-        return new Candidate(
-            id: $candidateModel->id,
-            name: $candidateModel->name,
-            email: $candidateModel->email,
-            skills: $candidateModel->skills
-        );
-    }
+    //     return new Candidate(
+    //         id: $candidateModel->id,
+    //         name: $candidateModel->name,
+    //         email: $candidateModel->email,
+    //         skills: $candidateModel->skills
+    //     );
+    // }
 }

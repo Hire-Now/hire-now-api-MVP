@@ -6,14 +6,19 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Skill extends Model
+class Certificate extends Model
 {
     use HasUuids, SoftDeletes;
 
+    protected $table = 'certificates';
+
     protected $fillable = [
         'candidate_id',
-        'skill',
-        'proficiency',
+        'name',
+        'issue_date',
+        'issuer_entity',
+        'expiry_date',
+        'link'
     ];
 
     public function candidate()

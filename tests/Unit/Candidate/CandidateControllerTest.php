@@ -2,7 +2,7 @@
 namespace Tests\Unit\Candidate;
 
 use App\Application\UseCases\CandidateUseCase;
-use App\Domain\Repositories\CandidateRepositoryInterface;
+use App\Domain\Repositories\ICandidateRepository;
 use App\Infrastructure\Adapter\Inbound\CandidateController;
 use App\Infrastructure\Services\CandidateService;
 use Illuminate\Http\Request;
@@ -13,8 +13,8 @@ class CandidateControllerTest extends TestCase
 {
     public function testStore()
     {
-        /** @var CandidateRepositoryInterface|\Mockery\MockInterface $mockRepository */
-        $mockRepository = Mockery::mock(CandidateRepositoryInterface::class);
+        /** @var ICandidateRepository|\Mockery\MockInterface $mockRepository */
+        $mockRepository = Mockery::mock(ICandidateRepository::class);
         $mockRepository->shouldReceive('save')->andReturn(true);
 
         $useCase = new CandidateUseCase($mockRepository, new CandidateService());

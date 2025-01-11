@@ -39,8 +39,6 @@ class Candidate
         /** @var Language[]*/
         #[Getter]
         private ?array $languages = null,
-        #[Getter] #[Setter]
-        private ?string $yearsOfExperience = null,
         /** @var PreviousExperience[]*/
         #[Getter]
         private ?array $previousExperiences = null,
@@ -77,6 +75,10 @@ class Candidate
         private ?array $activeProcesses = null,
         #[Getter] #[Setter]
         private ?string $generatedPlatformCV = null,
+        #[Getter] #[Setter]
+        private ?string $yearsOfExperience = null,
+        #[Getter] #[Setter]
+        private ?string $monthsOfExperience = null,
     ) {
     }
 
@@ -233,6 +235,7 @@ class Candidate
             'skills'               => array_map(fn(Skill $skill) => $skill->toArray(), $this->skills ?? []),
             'languages'            => array_map(fn(Language $language) => $language->toArray(), $this->languages ?? []),
             'years_of_experience'  => $this->yearsOfExperience,
+            'months_of_experience' => $this->monthsOfExperience,
             'previous_experiences' => array_map(fn(PreviousExperience $experience) => $experience->toArray(), $this->previousExperiences ?? []),
             'education'            => array_map(fn(Education $education) => $education->toArray(), $this->education ?? []),
             'professional_summary' => $this->professionalSummary,
