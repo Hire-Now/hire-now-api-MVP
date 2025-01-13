@@ -61,16 +61,6 @@ class PermissionRepository implements PermissionRepositoryInterface
         }
     }
 
-    public function delete(string $id): bool
-    {
-        return true;
-    }
-
-    public function findByEmail(string $email): Permission
-    {
-        return new Permission();
-    }
-
     public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
     {
         $query = PermissionModel::query();

@@ -66,20 +66,4 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
             throw new Exception("Error processing JWT token data.", 0, $th);
         }
     }
-
-    public function findById(string $id): ?JwtToken
-    {
-        return null;
-    }
-
-    public function update(string $id, JwtToken $entity): JwtToken
-    {
-        //
-    }
-
-    public function delete(string $id): JwtToken
-    {
-        //
-    }
-
 }

@@ -12,17 +12,6 @@ use Illuminate\Support\Collection;
 
 class FileRepository implements FileRepositoryInterface
 {
-
-    public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection
-    {
-        return new Collection();
-    }
-
-    public function findById(string $id): ?File
-    {
-
-    }
-
     public function create(User $user, File $entity, string $role): File
     {
         try {
@@ -58,13 +47,6 @@ class FileRepository implements FileRepositoryInterface
         } catch (\Throwable $th) {
             throw new Exception("Error saving file record on the database", 0, $th);
         }
-    }
-    public function update(string $id, File $entity): File
-    {
-    }
-
-    public function delete(string $id): File
-    {
     }
 
     public function getFileWithCustomizedConditions(array $queryConditions): File

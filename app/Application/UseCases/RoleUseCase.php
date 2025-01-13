@@ -29,14 +29,6 @@ class RoleUseCase implements RoleUseCaseInterface
         return $this->repository->create($entity);
     }
 
-    public function updateRole(Role $entity): Role
-    {
-    }
-
-    public function deleteRole(Role $entity): Role
-    {
-    }
-
     public function assignPermissionsToRole(string $roleId, array $permissions): Role
     {
         return $this->repository->createRolePermissions($roleId, $permissions);

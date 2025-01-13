@@ -79,7 +79,7 @@ class CandidateController
 
             return response()->json([
                 'message'   => 'Candidate updated successfully!',
-                'candidate' => $candidate
+                'candidate' => []
             ]);
         } catch (\Throwable $th) {
             return response()->json([

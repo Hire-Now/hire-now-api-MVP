@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Contracts;
+namespace App\Domain\Ports\Outbound;
 
-interface TokenGeneratorInterface
+interface TokenGeneratorPort
 {
     public function generateVerificationToken(): string;
 }

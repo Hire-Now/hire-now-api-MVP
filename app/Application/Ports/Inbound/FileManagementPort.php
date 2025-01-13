@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Application\Contracts;
+namespace App\Application\Ports\Inbound;
 
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 
-interface FileUseCaseInterface
+interface FileManagementPort
 {
     public function uploadFileToStorage(User $user, array $files): array;
     public function saveFilesRecordOnDB(User $user, array $storedFiles): array;

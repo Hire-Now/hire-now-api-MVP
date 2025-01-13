@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Domain\Repositories;
+namespace App\Domain\Ports\Outbound;
 
-use App\Domain\Entities\Role;
 use App\Domain\Entities\User;
 use Illuminate\Database\Eloquent\Collection;
 
-interface UserRepositoryInterface
+interface UserRepositoryPort
 {
     public function create(User $entity): User;
     public function findById(string $id): ?User;
@@ -17,5 +16,4 @@ interface UserRepositoryInterface
     public function paginate(int $perPage): Collection;
     public function setRolesToUser(string $userId, array $roles): User;
     public function removeRolesToUser(string $userId, array $roles): User;
-
 }

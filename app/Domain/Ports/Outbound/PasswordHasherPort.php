@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Contracts;
+namespace App\Domain\Ports\Outbound;
 
-interface PasswordHasherInterface
+interface PasswordHasherPort
 {
     public function hash(string $password): string;
     public function verify(string $password, string $hashedPassword): bool;

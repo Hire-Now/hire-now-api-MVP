@@ -137,11 +137,6 @@ class UserRepository implements UserRepositoryInterface
         }
     }
 
-    public function paginate(int $perPage): Collection
-    {
-        return new Collection();
-    }
-
     public function setRolesToUser(string $userId, array $roles): User
     {
         try {

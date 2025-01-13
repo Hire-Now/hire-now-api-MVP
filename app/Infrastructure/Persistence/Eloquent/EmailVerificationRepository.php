@@ -56,11 +56,6 @@ class EmailVerificationRepository implements EmailVerificationRepositoryInterfac
         }
     }
 
-    public function findById(string $id): ?EmailVerification
-    {
-        return null;
-    }
-
     public function update(string $id, EmailVerification $entity): EmailVerification
     {
         try {
@@ -83,25 +78,4 @@ class EmailVerificationRepository implements EmailVerificationRepositoryInterfac
             throw new Exception($th->getMessage(), 0, $th);
         }
     }
-
-    public function delete(string $id): EmailVerification
-    {
-        return new EmailVerification();
-    }
-
-    public function findByEmail(string $email): EmailVerification
-    {
-        return new EmailVerification();
-    }
-
-    public function fetchAll(): Collection
-    {
-        return new Collection();
-    }
-
-    public function paginate(int $perPage): Collection
-    {
-        return new Collection();
-    }
-
 }

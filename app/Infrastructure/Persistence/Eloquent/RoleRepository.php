@@ -97,11 +97,6 @@ class RoleRepository implements RoleRepositoryInterface
         }
     }
 
-    public function delete(string $id): bool
-    {
-        return true;
-    }
-
     public function createRolePermissions(string $roleId, array $permissions): Role
     {
         try {
