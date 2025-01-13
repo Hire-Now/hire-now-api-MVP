@@ -3,17 +3,14 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\Permission;
-use App\Domain\Entities\Role;
-use App\Domain\Repositories\PermissionRepositoryInterface;
-use App\Domain\Repositories\RoleRepositoryInterface;
+use App\Domain\Ports\Outbound\PermissionRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Models\Permission as PermissionModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\DB;
 
-class PermissionRepository implements PermissionRepositoryInterface
+class PermissionRepository implements PermissionRepositoryPort
 {
     public function create(Permission $permission): Permission
     {

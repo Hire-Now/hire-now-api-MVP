@@ -2,25 +2,19 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Application\Contracts\ConsumerRepositoryInterface;
+use App\Application\Contracts\ConsumerRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Adapters\UserAdapter;
 use Exception;
-use Carbon\Carbon;
 use App\Domain\Entities\JwtToken;
-use App\Domain\Entities\Permission;
-use App\Domain\Entities\Role;
-use App\Domain\Entities\User;
-use App\Domain\Enums\ElementStatus;
-
-use App\Domain\Repositories\JwtTokenRepositoryInterface;
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\Domain\Ports\Outbound\JWTTokenRepositoryPort;
+use App\Domain\Ports\Outbound\UserRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Adapters\ConsumerAdapter;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Infrastructure\Persistence\Eloquent\Models\JwtToken as ModelsJwtToken;
 
-class JwtTokenRepository implements JwtTokenRepositoryInterface
+class JwtTokenRepository implements JWTTokenRepositoryPort
 {
-    public function __construct(private readonly UserRepositoryInterface $userRepositoryInterface, private readonly ConsumerRepositoryInterface $consumerRepositoryInterface)
+    public function __construct(private readonly UserRepositoryPort $userRepository, private readonly ConsumerRepositoryPort $consumerRepository)
     {
     }
 
@@ -54,7 +48,7 @@ class JwtTokenRepository implements JwtTokenRepositoryInterface
             ])->firstOrFail();
 
             $entity = $jwtTokenModel->owner === 'User' ?
-                $this->userRepositoryInterface->findById($userId) : $this->consumerRepositoryInterface->findById($userId);
+                $this->userRepository->findById($userId) : $this->consumerRepository->findById($userId);
 
             return [
                 'model'  => $jwtTokenModel->owner === 'User' ? UserAdapter::toEloquent($entity) : ConsumerAdapter::toEloquent($entity),

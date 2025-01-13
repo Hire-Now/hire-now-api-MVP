@@ -2,9 +2,6 @@
 
 namespace App\Domain\Services;
 
-use App\Domain\Entities\Candidate;
-use App\Domain\Repositories\ICandidateRepository;
-
 class CandidateService
 {
     public function calculateYearsOfExperienceWithMonths(int|float $monthsOfExperience)

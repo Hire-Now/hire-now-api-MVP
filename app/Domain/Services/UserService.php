@@ -2,13 +2,13 @@
 
 namespace App\Domain\Services;
 
-use App\Domain\Entities\User;
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\Domain\Ports\Outbound\UserRepositoryPort;
 
 class UserService
 {
-    public function __construct(private UserRepositoryInterface $repository)
-    {}
+    public function __construct(private UserRepositoryPort $repository)
+    {
+    }
 
     public function validateSkills(string $skills): bool
     {

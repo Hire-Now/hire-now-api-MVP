@@ -3,12 +3,12 @@
 namespace App\Application\Handlers\Permission;
 
 use App\Application\Commands\Permission\CreatePermissionCommand;
-use App\Application\Contracts\PermissionUseCaseInterface;
+use App\Application\Ports\Inbound\PermissionManagementPort;
 use App\Domain\Entities\Permission;
 
 class CreatePermissionCommandHandler
 {
-    public function __construct(private PermissionUseCaseInterface $permissionUseCase)
+    public function __construct(private PermissionManagementPort $permissionUseCase)
     {
     }
 

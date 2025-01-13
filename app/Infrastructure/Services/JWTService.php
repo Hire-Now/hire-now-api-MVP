@@ -8,19 +8,19 @@ use Firebase\JWT\Key;
 use Illuminate\Support\Str;
 use App\Domain\Entities\User;
 use Illuminate\Support\Facades\Storage;
-use App\Domain\Contracts\JWTServiceInterface;
 use App\Domain\Entities\Consumer;
 use App\Domain\Entities\JwtToken;
-use App\Domain\Repositories\JwtTokenRepositoryInterface;
+use App\Domain\Ports\Outbound\JWTServicePort;
+use App\Domain\Ports\Outbound\JWTTokenRepositoryPort;
 use Illuminate\Validation\UnauthorizedException;
 
-class JWTService implements JWTServiceInterface
+class JWTService implements JWTServicePort
 {
     //todo: Crear job para invalidar tokens
     private ?string $privateKey;
     private ?string $publicKey;
 
-    public function __construct(private JwtTokenRepositoryInterface $jwtTokenRepository)
+    public function __construct(private JWTTokenRepositoryPort $jwtTokenRepository)
     {
         $this->privateKey = Storage::disk('local')->get('keys/' . config('app.user_auth.private_key_path'));
         $this->publicKey = Storage::disk('local')->get('keys/' . config('app.user_auth.public_key_path'));

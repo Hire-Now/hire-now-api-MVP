@@ -2,14 +2,14 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\Contracts\PermissionUseCaseInterface;
+use App\Application\Ports\Inbound\PermissionManagementPort;
 use App\Domain\Entities\Permission;
-use App\Domain\Repositories\PermissionRepositoryInterface;
+use App\Domain\Ports\Outbound\PermissionRepositoryPort;
 use Illuminate\Database\Eloquent\Collection;
 
-class PermissionUseCase implements PermissionUseCaseInterface
+class PermissionUseCase implements PermissionManagementPort
 {
-    public function __construct(private PermissionRepositoryInterface $repository)
+    public function __construct(private PermissionRepositoryPort $repository)
     {
     }
 
@@ -26,11 +26,11 @@ class PermissionUseCase implements PermissionUseCaseInterface
         return $this->repository->fetchAll($name, $status, $orderBy, $orderDirection);
     }
 
-    public function updatePermission(Permission $entity): Permission
+    public function updatePermission(Permission $entity): void
     {
     }
 
-    public function deletePermission(Permission $entity): Permission
+    public function deletePermission(Permission $entity): void
     {
     }
 }

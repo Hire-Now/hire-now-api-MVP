@@ -2,20 +2,17 @@
 
 namespace App\Application\UseCases;
 
-use App\Domain\Contracts\EmailSenderInterface;
 use App\Domain\Entities\EmailVerification;
-use App\Domain\Repositories\UserRepositoryInterface;
-use App\Domain\Entities\User;
-use App\Domain\Repositories\EmailVerificationRepositoryInterface;
-use App\Domain\Contracts\TokenGeneratorInterface;
+use App\Domain\Ports\Outbound\EmailVerificationRepositoryPort;
+use App\Domain\Ports\Outbound\EmailSenderPort;
+use App\Domain\Ports\Outbound\TokenGeneratorPort;
 use Exception;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\UnauthorizedException;
 
 class EmailUseCase
 {
-    public function __construct(private EmailVerificationRepositoryInterface $repository, private TokenGeneratorInterface $tokenGenerator, private EmailSenderInterface $emailSender)
+    public function __construct(private EmailVerificationRepositoryPort $repository, private TokenGeneratorPort $tokenGenerator, private EmailSenderPort $emailSender)
     {
     }
 

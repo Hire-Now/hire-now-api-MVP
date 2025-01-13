@@ -2,14 +2,14 @@
 
 namespace App\Infrastructure\Middlewares;
 
-use App\Domain\Contracts\JWTServiceInterface;
+use App\Domain\Ports\Outbound\JWTServicePort;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class JwtAuthMiddleware
 {
-    public function __construct(private readonly JWTServiceInterface $jwtService)
+    public function __construct(private readonly JWTServicePort $jwtService)
     {
     }
 

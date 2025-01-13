@@ -3,7 +3,7 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\EmailVerification;
-use App\Domain\Repositories\EmailVerificationRepositoryInterface;
+use App\Domain\Ports\Outbound\EmailVerificationRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Models\EmailVerificationToken;
 use Carbon\Carbon;
 use Exception;
@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 
-class EmailVerificationRepository implements EmailVerificationRepositoryInterface
+class EmailVerificationRepository implements EmailVerificationRepositoryPort
 {
     public function create(EmailVerification $entity): EmailVerification
     {

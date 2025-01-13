@@ -4,17 +4,16 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\Permission;
 use App\Domain\Entities\Role;
-use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
 use App\Domain\Enums\ElementStatus;
-use App\Infrastructure\Persistence\Eloquent\Models\Role as RoleModel;
+use App\Domain\Ports\Outbound\UserRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Models\User as UserModel;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class UserRepository implements UserRepositoryInterface
+class UserRepository implements UserRepositoryPort
 {
     public function create(User $user): User
     {

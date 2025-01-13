@@ -2,15 +2,14 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\Contracts\RoleUseCaseInterface;
+use App\Application\Ports\Inbound\RoleManagementPort;
 use App\Domain\Entities\Role;
-use App\Domain\Repositories\RoleRepositoryInterface;
-use App\Shared\Types\SearchRolesFilter;
+use App\Domain\Ports\Outbound\RoleRepositoryPort;
 use Illuminate\Database\Eloquent\Collection;
 
-class RoleUseCase implements RoleUseCaseInterface
+class RoleUseCase implements RoleManagementPort
 {
-    public function __construct(private RoleRepositoryInterface $repository)
+    public function __construct(private RoleRepositoryPort $repository)
     {
     }
 

@@ -3,14 +3,14 @@
 namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\File;
-use App\Domain\Repositories\FileRepositoryInterface;
+use App\Domain\Ports\Outbound\FileRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Adapters\FileAdapter;
 use App\Infrastructure\Persistence\Eloquent\Models\File as ModelsFile;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
 
-class FileRepository implements FileRepositoryInterface
+class FileRepository implements FileRepositoryPort
 {
     public function create(User $user, File $entity, string $role): File
     {

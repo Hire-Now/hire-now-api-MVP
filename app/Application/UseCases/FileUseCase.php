@@ -2,9 +2,9 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 use App\Domain\Entities\File;
-use App\Domain\Repositories\FileRepositoryInterface;
+use App\Domain\Ports\Outbound\FileRepositoryPort;
 use App\Infrastructure\Adapter\OpenAIAdapter;
 use App\Infrastructure\Jobs\ScanFileWithVirusTotal;
 use App\Infrastructure\Persistence\Eloquent\Models\User;
@@ -13,9 +13,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Smalot\PdfParser\Parser;
 
-class FileUseCase implements FileUseCaseInterface
+class FileUseCase implements FileManagementPort
 {
-    public function __construct(private readonly FileRepositoryInterface $fileRepository, private readonly OpenAIAdapter $openAIAdapter)
+    public function __construct(private readonly FileRepositoryPort $fileRepository, private readonly OpenAIAdapter $openAIAdapter)
     {
     }
 

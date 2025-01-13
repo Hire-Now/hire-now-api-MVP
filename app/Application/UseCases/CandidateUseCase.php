@@ -2,15 +2,15 @@
 
 namespace App\Application\UseCases;
 
-use App\Application\Contracts\ICandidateUseCase;
+use App\Application\Ports\Inbound\CandidateManagementPort;
 use App\Domain\Entities\Candidate;
-use App\Domain\Repositories\ICandidateRepository;
+use App\Domain\Ports\Outbound\CandidateRepositoryPort;
 use App\Domain\Services\CandidateService;
 use App\Infrastructure\Utils\ArrayHelper;
 
-class CandidateUseCase implements ICandidateUseCase
+class CandidateUseCase implements CandidateManagementPort
 {
-    public function __construct(private readonly ICandidateRepository $repository, private readonly CandidateService $service)
+    public function __construct(private readonly CandidateRepositoryPort $repository, private readonly CandidateService $service)
     {
     }
 

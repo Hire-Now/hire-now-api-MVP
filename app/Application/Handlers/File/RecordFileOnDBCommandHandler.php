@@ -3,12 +3,12 @@
 namespace App\Application\Handlers\File;
 
 use App\Application\Commands\File\RecordFileOnDBCommand;
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 use App\Domain\Entities\File;
 
 class RecordFileOnDBCommandHandler
 {
-    public function __construct(private FileUseCaseInterface $fileUseCaseInterface)
+    public function __construct(private FileManagementPort $useCase)
     {
     }
 
@@ -20,6 +20,6 @@ class RecordFileOnDBCommandHandler
      */
     public function handle(RecordFileOnDBCommand $command): array
     {
-        return $this->fileUseCaseInterface->saveFilesRecordOnDB($command->getUser(), $command->getStoredFiles());
+        return $this->useCase->saveFilesRecordOnDB($command->getUser(), $command->getStoredFiles());
     }
 }

@@ -3,12 +3,12 @@
 namespace App\Application\Handlers\Permission;
 
 use App\Application\Commands\Permission\ListPermissionsCommand;
-use App\Application\Contracts\PermissionUseCaseInterface;
+use App\Application\Ports\Inbound\PermissionManagementPort;
 use Illuminate\Database\Eloquent\Collection;
 
 class ListPermissionsCommandHandler
 {
-    public function __construct(private PermissionUseCaseInterface $permissionUseCase)
+    public function __construct(private PermissionManagementPort $permissionUseCase)
     {
     }
 

@@ -3,15 +3,14 @@
 namespace App\Infrastructure\Middlewares;
 
 use App\Application\Contracts\ConsumerAuthInterface;
-use App\Domain\Contracts\JWTServiceInterface;
-use App\Infrastructure\Persistence\Eloquent\Models\ApiConsumer;
+use App\Domain\Ports\Outbound\JWTServicePort;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class ConsumerAuthMiddleware
 {
-    public function __construct(private ConsumerAuthInterface $authService, private JWTServiceInterface $jwtService)
+    public function __construct(private ConsumerAuthInterface $authService, private JWTServicePort $jwtService)
     {
     }
 

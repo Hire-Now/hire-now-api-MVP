@@ -3,12 +3,12 @@
 namespace App\Application\Handlers\File;
 
 use App\Application\Commands\File\UploadNewFileCommand;
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 use App\Domain\Entities\File;
 
 class UploadNewFileCommandHandler
 {
-    public function __construct(private FileUseCaseInterface $fileUseCaseInterface)
+    public function __construct(private FileManagementPort $useCase)
     {
     }
 
@@ -20,6 +20,6 @@ class UploadNewFileCommandHandler
      */
     public function handle(UploadNewFileCommand $command): array
     {
-        return $this->fileUseCaseInterface->uploadFileToStorage($command->getUser(), $command->getFiles());
+        return $this->useCase->uploadFileToStorage($command->getUser(), $command->getFiles());
     }
 }

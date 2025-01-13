@@ -2,10 +2,10 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Domain\Contracts\PasswordHasherInterface;
+use App\Domain\Ports\Outbound\PasswordHasherPort;
 use Illuminate\Support\Facades\Hash;
 
-class BcryptPasswordHasher implements PasswordHasherInterface
+class BcryptPasswordHasher implements PasswordHasherPort
 {
     public function hash(string $password): string
     {

@@ -3,17 +3,14 @@
 namespace App\Application\Services;
 
 use App\Application\Contracts\ConsumerAuthInterface;
-use App\Application\Contracts\ConsumerRepositoryInterface;
+use App\Application\Contracts\ConsumerRepositoryPort;
 use App\Domain\Entities\Consumer;
 use App\Domain\Models\ApiConsumer;
 
 class ConsumerAuthService implements ConsumerAuthInterface
 {
-    private ConsumerRepositoryInterface $consumerRepository;
-
-    public function __construct(ConsumerRepositoryInterface $consumerRepository)
+    public function __construct(private readonly ConsumerRepositoryPort $consumerRepository)
     {
-        $this->consumerRepository = $consumerRepository;
     }
 
     public function authenticate(string $authorizationHeader): ?Consumer

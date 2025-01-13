@@ -2,13 +2,13 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Application\Contracts\ConsumerRepositoryInterface;
+use App\Application\Contracts\ConsumerRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Adapters\ConsumerAdapter;
 use App\Infrastructure\Persistence\Eloquent\Models\ApiConsumer;
 use App\Domain\Entities\Consumer;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class ConsumerRepository implements ConsumerRepositoryInterface
+class ConsumerRepository implements ConsumerRepositoryPort
 {
     public function findByClientId(string $clientId): ?Consumer
     {

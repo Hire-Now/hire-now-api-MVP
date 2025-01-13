@@ -2,10 +2,10 @@
 
 namespace App\Infrastructure\Mail;
 
-use App\Domain\Contracts\EmailSenderInterface;
+use App\Domain\Ports\Outbound\EmailSenderPort;
 use Resend\Laravel\Facades\Resend;
 
-class EmailSender implements EmailSenderInterface
+class EmailSender implements EmailSenderPort
 {
     public function sendVerificationEmail(string $to, string $link): bool
     {

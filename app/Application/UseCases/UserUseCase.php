@@ -2,20 +2,18 @@
 
 namespace App\Application\UseCases;
 
-use App\Domain\Contracts\JWTServiceInterface;
-use App\Domain\Entities\Role;
 use App\Domain\Entities\User;
-use App\Domain\Contracts\PasswordHasherInterface;
-use App\Domain\Contracts\TokenGeneratorInterface;
-use App\Domain\Repositories\UserRepositoryInterface;
+use App\Domain\Ports\Outbound\JWTServicePort;
+use App\Domain\Ports\Outbound\PasswordHasherPort;
+use App\Domain\Ports\Outbound\UserRepositoryPort;
 use Illuminate\Database\Eloquent\Collection;
 
 class UserUseCase
 {
     public function __construct(
-        private UserRepositoryInterface $repository,
-        private PasswordHasherInterface $passwordHasher,
-        private JWTServiceInterface $jwtService
+        private UserRepositoryPort $repository,
+        private PasswordHasherPort $passwordHasher,
+        private JWTServicePort $jwtService
     ) {
     }
 

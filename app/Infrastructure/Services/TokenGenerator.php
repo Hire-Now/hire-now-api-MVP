@@ -2,10 +2,10 @@
 
 namespace App\Infrastructure\Services;
 
-use App\Domain\Contracts\TokenGeneratorInterface;
+use App\Domain\Ports\Outbound\TokenGeneratorPort;
 use Illuminate\Support\Str;
 
-class TokenGenerator implements TokenGeneratorInterface
+class TokenGenerator implements TokenGeneratorPort
 {
     public function generateVerificationToken(): string
     {

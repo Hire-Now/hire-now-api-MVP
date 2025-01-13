@@ -2,22 +2,22 @@
 
 namespace App\Infrastructure\Persistence\Eloquent;
 
-use App\Domain\Repositories\ICandidateRepository;
 use App\Domain\Entities\Candidate;
+use App\Domain\Ports\Outbound\CandidateRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Models\Candidate as CandidateModel;
 use App\Infrastructure\Utils\ArrayHelper;
 use Exception;
 
-class CandidateRepository implements ICandidateRepository
+class CandidateRepository implements CandidateRepositoryPort
 {
     public function create(Candidate $candidate): Candidate
     {
         try {
             $candidateArray = ArrayHelper::removeEmptyOrNullElements($candidate->toArray());
 
-            $candidateModel = CandidateModel::create(
-                $candidateArray
-            );
+            // $candidateModel = CandidateModel::create(
+            //     $candidateArray
+            // );
 
             return $candidate;
         } catch (\Throwable $th) {

@@ -4,7 +4,7 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Entities\Role;
 use App\Domain\Entities\Permission;
-use App\Domain\Repositories\RoleRepositoryInterface;
+use App\Domain\Ports\Outbound\RoleRepositoryPort;
 use App\Infrastructure\Persistence\Eloquent\Models\Permission as PermissionModel;
 use App\Infrastructure\Persistence\Eloquent\Models\Role as RoleModel;
 use Carbon\Carbon;
@@ -12,7 +12,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class RoleRepository implements RoleRepositoryInterface
+class RoleRepository implements RoleRepositoryPort
 {
     public function create(Role $role): Role
     {

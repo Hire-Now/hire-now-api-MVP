@@ -2,20 +2,18 @@
 
 namespace App\Application\Handlers\Resume;
 
-use App\Application\Commands\Resume\ExtractTextFromResumeCommand;
-use App\Application\Commands\Resume\GetMainResumeCommand;
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 use App\Application\Queries\Resume\GetMainResumeQuery;
 
 class GetMainResumeQueryHandler
 {
-    public function __construct(private readonly FileUseCaseInterface $fileUseCase)
+    public function __construct(private readonly FileManagementPort $useCase)
     {
     }
 
     public function handle(GetMainResumeQuery $command): array
     {
-        return $this->fileUseCase->getFileWithCustomizedConditions([
+        return $this->useCase->getFileWithCustomizedConditions([
             'owner_id'              => $command->getUserId(),
             'metadata->uploaded_by' => $command->getRole(),
             'metadata->is_cv'       => $command->getIsCV(),

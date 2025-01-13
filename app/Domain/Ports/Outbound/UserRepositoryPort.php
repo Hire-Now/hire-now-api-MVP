@@ -13,7 +13,7 @@ interface UserRepositoryPort
     public function delete(string $id): bool;
     public function findByEmail(string $email): User;
     public function fetchAll(?string $name, ?string $status, string $orderBy, string $orderDirection): Collection;
-    public function paginate(int $perPage): Collection;
+    // public function paginate(int $perPage): Collection;
     public function setRolesToUser(string $userId, array $roles): User;
     public function removeRolesToUser(string $userId, array $roles): User;
 }

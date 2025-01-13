@@ -3,12 +3,11 @@
 namespace App\Application\UseCases;
 
 use App\Application\Contracts\ConsumerAuthInterface;
-use App\Domain\Contracts\JWTServiceInterface;
-use App\Domain\Entities\Consumer;
+use App\Domain\Ports\Outbound\JWTServicePort;
 
 class ConsumerUseCase
 {
-    public function __construct(private JWTServiceInterface $jwtService, private ConsumerAuthInterface $consumerAuthService)
+    public function __construct(private JWTServicePort $jwtService, private ConsumerAuthInterface $consumerAuthService)
     {
     }
 

@@ -3,12 +3,12 @@
 namespace App\Application\Handlers\File;
 
 use App\Application\Commands\File\SetFileForScanCommand;
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 use App\Domain\Entities\File;
 
 class SetFileForScanCommandHandler
 {
-    public function __construct(private FileUseCaseInterface $fileUseCaseInterface)
+    public function __construct(private FileManagementPort $useCase)
     {
     }
 
@@ -20,6 +20,6 @@ class SetFileForScanCommandHandler
      */
     public function handle(SetFileForScanCommand $command): void
     {
-        $this->fileUseCaseInterface->setFileIntoQueueForScan($command->getSavedFiles());
+        $this->useCase->setFileIntoQueueForScan($command->getSavedFiles());
     }
 }

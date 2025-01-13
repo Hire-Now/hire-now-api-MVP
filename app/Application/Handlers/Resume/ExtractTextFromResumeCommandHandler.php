@@ -3,16 +3,16 @@
 namespace App\Application\Handlers\Resume;
 
 use App\Application\Commands\Resume\ExtractTextFromResumeAndEnhanceItCommand;
-use App\Application\Contracts\FileUseCaseInterface;
+use App\Application\Ports\Inbound\FileManagementPort;
 
 class ExtractTextFromResumeCommandHandler
 {
-    public function __construct(private readonly FileUseCaseInterface $fileUseCase)
+    public function __construct(private readonly FileManagementPort $useCase)
     {
     }
 
     public function handle(ExtractTextFromResumeAndEnhanceItCommand $command)
     {
-        return $this->fileUseCase->extractTextFromFileAndEnhanceIt($command->getResumeContent(), $command->getLanguageFile());
+        return $this->useCase->extractTextFromFileAndEnhanceIt($command->getResumeContent(), $command->getLanguageFile());
     }
 }

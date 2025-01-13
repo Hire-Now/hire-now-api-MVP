@@ -3,13 +3,12 @@
 namespace App\Application\Handlers\Candidate;
 
 use App\Application\Commands\Candidate\CreateCandidateCommand;
-use App\Application\Contracts\ICandidateUseCase;
-use App\Application\UseCases\CandidateUseCase;
+use App\Application\Ports\Inbound\CandidateManagementPort;
 use App\Domain\Entities\Candidate;
 
 class CreateCandidateCommandHandler
 {
-    public function __construct(private ICandidateUseCase $useCase)
+    public function __construct(private CandidateManagementPort $useCase)
     {
     }
 

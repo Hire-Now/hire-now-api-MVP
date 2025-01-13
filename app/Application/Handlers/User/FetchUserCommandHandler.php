@@ -2,14 +2,9 @@
 
 namespace App\Application\Handlers\User;
 
-use App\Application\Commands\User\CreateUserCommand;
 use App\Application\Commands\User\FetchUserInformationCommand;
 use App\Application\UseCases\UserUseCase;
-use App\Domain\Repositories\UserRepositoryInterface;
 use App\Domain\Entities\User;
-use App\Domain\Enums\ElementStatus;
-use App\Domain\Contracts\PasswordHasherInterface;
-use Carbon\Carbon;
 
 class FetchUserCommandHandler
 {

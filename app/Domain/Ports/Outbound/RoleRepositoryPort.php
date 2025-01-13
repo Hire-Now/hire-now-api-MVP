@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 
 interface RoleRepositoryPort
 {
+    public function create(Role $role): Role;
     public function findById(string $id): ?Role;
     public function findByName(array $roles): ?array;
     public function update(string $id, Role $entity): Role;
